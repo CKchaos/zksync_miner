@@ -2,6 +2,7 @@ from web3 import Web3
 import json
 import time
 import config
+import requests
 
 
 def get_readable_time():
@@ -42,13 +43,13 @@ def usd_to_zk_gas(usd=0.3):
     return gas_unit
 
 
-def check_tx_status(tx, rpc="https://mainnet.era.zksync.io"):
+def check_tx_status(tx_hash, rpc="https://mainnet.era.zksync.io"):
     attempt = 0
     while attempt < 3:
         try:
             w3 = Web3(Web3.HTTPProvider(rpc))
-            txn = w3.eth.get_transaction_receipt(tx)
-            status = txn['status']
+            tx = w3.eth.get_transaction_receipt(tx_hash)
+            status = tx['status']
             if status == 1:
                 return True
             else:

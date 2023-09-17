@@ -36,12 +36,19 @@ def check_crypto_price_range(asset, price, expected_price_range):
         raise Exception(get_readable_time(), '%s market price (%.2f) is out of expected range.' % (asset, price))
 
 
-def usd_to_zk_gas(usd=0.3):
-    eth_price = crypto_to_usd('ETH')
-    gas_unit = int(Web3.to_wei(usd / eth_price, 'ether') / config.zksync_base_fee)
+def usd_to_zk_gas(usd, eth_market_price):
+    gas_unit = int(Web3.to_wei(usd / eth_market_price, 'ether') / config.zksync_base_fee)
 
     return gas_unit
 
+def load_abi(name, abi_file_path):
+        try:
+            with open(abi_file_path) as f:
+                abi = json.load(f)
+                return abi
+        except:
+            print(get_readable_time() + ': ' + name +' load abi error.')
+            return 'ERROR'
 
 def check_tx_status(tx_hash, rpc="https://mainnet.era.zksync.io"):
     attempt = 0

@@ -15,13 +15,14 @@ if __name__ == '__main__':
     for acc_info in account_info:
         account_dict[acc_info['label']] = w3.eth.account.from_key(acc_info['private_key'])
     
-    gas_for_approve = 0.26256
-    gas_for_swap=0.36857
-    slippage=0.45
-    syncswap_operator = SyncSwap(account_dict['espoo3'], gas_for_approve, gas_for_swap, slippage)
+    gas_for_approve = 0.25
+    gas_for_swap=0.4
+    slippage=0.5
+    syncswap_operator = SyncSwap(account_dict['sgl32'], gas_for_approve, gas_for_swap, slippage)
 
-    swap_amount = 0.008
-    swap_status = syncswap_operator.eth_to_usdc_swap(swap_amount)
+    swap_amount = 5
+    #swap_status = syncswap_operator.eth_to_usdc_swap(swap_amount)
+    swap_status = syncswap_operator.usdc_to_eth_swap(swap_amount)
 
     current_time = utils.get_readable_time()
     if swap_status:

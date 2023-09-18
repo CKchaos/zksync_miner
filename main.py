@@ -18,10 +18,14 @@ if __name__ == '__main__':
     gas_for_approve = 0.25
     gas_for_swap=0.4
     slippage=0.5
-    syncswap_operator = SyncSwap(account_dict['sgl32'], gas_for_approve, gas_for_swap, slippage)
+    syncswap_operator = SyncSwap(account_dict['sgl29'], gas_for_approve, gas_for_swap, slippage)
 
-    swap_amount = 5
+    #swap_amount = 0.004
     #swap_status = syncswap_operator.eth_to_usdc_swap(swap_amount)
+    
+    swap_amount = utils.zk_usdc_balance(syncswap_operator.acc.address)
+    print(swap_amount)
+    syncswap_operator.check_usdc_approval(swap_amount)
     swap_status = syncswap_operator.usdc_to_eth_swap(swap_amount)
 
     current_time = utils.get_readable_time()

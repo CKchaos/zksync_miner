@@ -43,31 +43,38 @@ class SyncSwap:
 
         return (eth_price_swap_to_usdc, eth_price_swap_to_eth)
 
-    def approve_zk_usdc(self, nonce, address):
+    def check_usdc_approval(self, ammount_in_usdc):
         approve_abi = utils.load_abi('USDC', config.erc20_abi)
         contract_approve = self.w3.eth.contract(config.zk_usdc_addr, abi=approve_abi)
 
-        approve_args = [Web3.to_checksum_address(address), 2 ** 256 - 1]
+        allowance_args = [Web3.to_checksum_address(self.acc.address), config.zk_syncswap_router_addr]
+        allowance_in_wei = contract_approve.functions.allowance(*allowance_args).call()
 
-        approve_tx = contract_approve.functions.approve(*approve_args)
-        builded_approve = approve_tx.build_transaction({
-            'chainId': config.zksync_chain_id,
-            'from': Web3.to_checksum_address(self.acc.address),
-            'value': 0,
-            'gas': self.gas_for_approve,
-            'nonce': nonce,
-            'maxFeePerGas': config.zksync_base_fee,
-            'maxPriorityFeePerGas': config.zksync_priority_fee
-        })
+        amount = int(ammount_in_usdc * 1e6)
+        if allowance_in_wei < amount:
+            nonce = self.w3.eth.get_transaction_count(self.acc.address)
 
-        signed_approve = self.w3.eth.account.sign_transaction(builded_approve, self.acc.key)
-        approve_hash = self.w3.eth.send_raw_transaction(signed_approve.rawTransaction).hex()
+            approve_args = [Web3.to_checksum_address(config.zk_syncswap_router_addr), 2 ** 256 - 1]
 
-        time.sleep(6)
+            approve_tx = contract_approve.functions.approve(*approve_args)
+            builded_approve = approve_tx.build_transaction({
+                'chainId': config.zksync_chain_id,
+                'from': Web3.to_checksum_address(self.acc.address),
+                'value': 0,
+                'gas': self.gas_for_approve,
+                'nonce': nonce,
+                'maxFeePerGas': config.zksync_base_fee,
+                'maxPriorityFeePerGas': config.zksync_priority_fee
+            })
 
-        approve_status = utils.check_tx_status(approve_hash)
-    
-        return approve_status
+            signed_approve = self.w3.eth.account.sign_transaction(builded_approve, self.acc.key)
+            approve_hash = self.w3.eth.send_raw_transaction(signed_approve.rawTransaction).hex()
+
+            time.sleep(6)
+
+            approve_status = utils.check_tx_status(approve_hash)
+        
+            return approve_status
 
     def eth_to_usdc_swap(self, amount_in_ether):
         time.sleep(1)
@@ -105,7 +112,7 @@ class SyncSwap:
         tx_status = utils.check_tx_status(tx_hash)
         return tx_status
 
-    def usdc_to_eth_swap(self,ammount_in_usdc, needApprove = True):
+    def usdc_to_eth_swap(self, ammount_in_usdc):
         time.sleep(1)
         amount = int(ammount_in_usdc * 1e6)
         _, pool_eth_price = self.get_pool_eth_price()
@@ -121,10 +128,6 @@ class SyncSwap:
                   amount)],
                 min_amount_received,
                 deadline]
-
-        if needApprove:
-            self.approve_zk_usdc(nonce, config.zk_syncswap_router_addr)
-            nonce += 1
 
         tx = contract.functions.swap(*args)
         builded_tx = tx.build_transaction({

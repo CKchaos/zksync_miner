@@ -2,6 +2,8 @@ erc20_abi = 'abi/erc20abi.json'
 syncswap_router_abi = 'abi/syncswap/syncswap_router_abi.json'
 syncswap_classic_pool_abi = 'abi/syncswap/SyncSwapClassicPool.json'
 
+eth_mainnet_rpc = 'https://cloudflare-eth.com'
+
 zksync_era_rpc = 'https://mainnet.era.zksync.io'
 zksync_chain_id = 324
 zksync_base_fee = 250000000

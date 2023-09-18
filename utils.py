@@ -107,3 +107,46 @@ def zk_eth_balance(address):
             attempt += 1
   
     raise Exception('ZkSync Eth Balance Error')
+
+
+def zk_usdc_balance(address):
+    address = Web3.to_checksum_address(address)
+    attempt = 0
+
+    while attempt < 3:
+        try:
+            w3 = Web3(Web3.HTTPProvider(config.zksync_era_rpc))
+            erc20_abi = load_abi('USDC', config.erc20_abi)
+            contract_usdc = w3.eth.contract(config.zk_usdc_addr, abi=erc20_abi)
+
+            blance_in_wei = contract_usdc.functions.balanceOf(address).call()
+
+            balance = blance_in_wei / 1e6
+
+            return balance
+
+        except:
+            time.sleep(3)
+            attempt += 1
+  
+    raise Exception('ZkSync USDC Balance Error')
+
+
+def get_eth_mainnet_gas_price():
+    attempt = 0
+
+    while attempt < 3:
+        try:
+            w3 = Web3(Web3.HTTPProvider(config.eth_mainnet_rpc))
+            gas_price = w3.eth.gas_price
+            gas_price_in_gwei = w3.from_wei(gas_price, 'gwei')
+
+            return gas_price_in_gwei
+
+        except:
+            time.sleep(3)
+            attempt += 1
+  
+    raise Exception('Getting ETH mainnet gas price error')
+
+    

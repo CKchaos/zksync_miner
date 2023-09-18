@@ -1,5 +1,7 @@
 test.ipynb
+zksync_test.ipynb
 password
 data/sgl_zksync_plan_x_py
 .ipynb_checkpoints/
 .DS_Store
+*__pycache__

@@ -28,7 +28,7 @@ class SyncSwap:
 
     def get_pool_eth_price(self):
         pool_abi = utils.load_abi('USDC_WETH_POOL', config.syncswap_classic_pool_abi)
-        pool = self.w3.eth.contract(address=config.zk_weth_usdc_pool_addr, abi=pool_abi)
+        pool = self.w3.eth.contract(address=config.zk_syncswap_weth_usdc_pool_addr, abi=pool_abi)
         reserves = pool.functions.getReserves().call()
         pool_fee = pool.functions.getProtocolFee().call()
 
@@ -85,7 +85,7 @@ class SyncSwap:
         contract = self.w3.eth.contract(config.zk_syncswap_router_addr, abi=self.router_abi)
 
         deadline = int(time.time() + 1800)
-        args = [[([(config.zk_weth_usdc_pool_addr, self.prepare_data_for_swap(self.acc.address, config.zk_weth_addr),
+        args = [[([(config.zk_syncswap_weth_usdc_pool_addr, self.prepare_data_for_swap(self.acc.address, config.zk_weth_addr),
                     '0x0000000000000000000000000000000000000000',
                     b'')],
                   '0x0000000000000000000000000000000000000000',
@@ -121,7 +121,7 @@ class SyncSwap:
         contract = self.w3.eth.contract(config.zk_syncswap_router_addr, abi=self.router_abi)
         
         deadline = int(time.time() + 1800)
-        args = [[([(config.zk_weth_usdc_pool_addr, self.prepare_data_for_swap(self.acc.address, config.zk_usdc_addr),
+        args = [[([(config.zk_syncswap_weth_usdc_pool_addr, self.prepare_data_for_swap(self.acc.address, config.zk_usdc_addr),
                     '0x0000000000000000000000000000000000000000',
                     b'')],
                   config.zk_usdc_addr,

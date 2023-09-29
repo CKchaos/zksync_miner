@@ -113,29 +113,6 @@ def get_zksync_tx_init_data():
 
     return init_tx
 
-def zk_usdc_balance(address):
-    address = Web3.to_checksum_address(address)
-    attempt = 0
-
-    while attempt < 3:
-        try:
-            w3 = Web3(Web3.HTTPProvider(ZKSYNC_ERA_RPC))
-            erc20_abi = load_abi(ERC20_ABI)
-            contract_usdc = w3.eth.contract(ZKSYNC_TOKENS['USDC'], abi=erc20_abi)
-
-            blance_in_wei = contract_usdc.functions.balanceOf(address).call()
-
-            balance = blance_in_wei / 1e6
-
-            return balance
-
-        except:
-            time.sleep(3)
-            attempt += 1
-  
-    raise Exception('ZkSync USDC Balance Error')
-
-
 def get_eth_mainnet_gas_price():
     attempt = 0
 

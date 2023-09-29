@@ -3,15 +3,20 @@ import json
 from web3 import Web3
 from eth_abi import encode
 
-import config
+from config import * 
 import utils
 
 class SyncSwap:
+    name = 'SyncSwap'
 
-    def __init__(self, acc, gas_for_approve = 0.25, gas_for_swap=0.4, slippage=0.3):
-        self.router_abi = utils.load_abi('Syncswap', config.syncswap_router_abi)
-        self.w3 = Web3(Web3.HTTPProvider(config.zksync_era_rpc))
+    def __init__(self, acc, swap_token, gas_for_approve = 0.25, gas_for_swap=0.4, slippage=0.3):
+        self.router_abi = utils.load_abi(SYNCSWAP_ROUTER_ABI)
+        self.w3 = Web3(Web3.HTTPProvider(ZKSYNC_ERA_RPC))
         self.acc = acc
+
+        self.swap_token = swap_token
+        token_abi = utils.load_abi(ERC20_ABI)
+        self.token_contract = self.w3.eth.contract(ZKSYNC_TOKENS[self.swap_token], abi=token_abi)
 
         eth_market_price = utils.crypto_to_usd('ETH')
         self.gas_for_approve = utils.usd_to_zk_gas(gas_for_approve, eth_market_price)
@@ -19,16 +24,16 @@ class SyncSwap:
         self.mink = (100 - slippage) * 0.01
 
     def prepare_data_for_swap(self, address, token_addr):
-        token_in_addr = config.zk_weth_addr
         withdraw_mode = 1
 
         swap_data = encode(['address', 'address', 'uint8'], [token_addr, address, withdraw_mode])
 
         return swap_data
 
+    # TODO: modify for any token
     def get_pool_eth_price(self):
-        pool_abi = utils.load_abi('USDC_WETH_POOL', config.syncswap_classic_pool_abi)
-        pool = self.w3.eth.contract(address=config.zk_syncswap_weth_usdc_pool_addr, abi=pool_abi)
+        pool_abi = utils.load_abi(SYNCSWAP_POOL_ABI)
+        pool = self.w3.eth.contract(address=ZK_SYNCSWAP_WETH_USDC_POOL_ADDR, abi=pool_abi)
         reserves = pool.functions.getReserves().call()
         pool_fee = pool.functions.getProtocolFee().call()
 
@@ -43,108 +48,101 @@ class SyncSwap:
 
         return (eth_price_swap_to_usdc, eth_price_swap_to_eth)
 
-    def check_usdc_approval(self, ammount_in_usdc):
-        approve_abi = utils.load_abi('USDC', config.erc20_abi)
-        contract_approve = self.w3.eth.contract(config.zk_usdc_addr, abi=approve_abi)
+    def check_token_approval(self, address_to_approve, ammount_in_wei):
+        allowance_args = [self.acc.address, address_to_approve]
+        allowance_in_wei = self.token_contract.functions.allowance(*allowance_args).call()
 
-        allowance_args = [Web3.to_checksum_address(self.acc.address), config.zk_syncswap_router_addr]
-        allowance_in_wei = contract_approve.functions.allowance(*allowance_args).call()
-
-        amount = int(ammount_in_usdc * 1e6)
-        if allowance_in_wei < amount:
+        if allowance_in_wei < ammount_in_wei:
             nonce = self.w3.eth.get_transaction_count(self.acc.address)
 
-            approve_args = [Web3.to_checksum_address(config.zk_syncswap_router_addr), 2 ** 256 - 1]
-
-            approve_tx = contract_approve.functions.approve(*approve_args)
-            builded_approve = approve_tx.build_transaction({
-                'chainId': config.zksync_chain_id,
-                'from': Web3.to_checksum_address(self.acc.address),
+            tx_data = utils.get_zksync_tx_init_data()
+            tx_data.update({
+                'from': self.acc.address,
                 'value': 0,
                 'gas': self.gas_for_approve,
-                'nonce': nonce,
-                'maxFeePerGas': config.zksync_base_fee,
-                'maxPriorityFeePerGas': config.zksync_priority_fee
+                'nonce': nonce
             })
 
-            signed_approve = self.w3.eth.account.sign_transaction(builded_approve, self.acc.key)
-            approve_hash = self.w3.eth.send_raw_transaction(signed_approve.rawTransaction).hex()
+            approve_args = [address_to_approve, 2 ** 256 - 1]
 
-            time.sleep(6)
+            approve_tx = self.token_contract.functions.approve(*approve_args)
+            builded_approve = approve_tx.build_transaction(tx_data)
 
-            approve_status = utils.check_tx_status(approve_hash)
-        
-            return approve_status
+            status = self.sign_and_send_tx(builded_approve)
 
-    def eth_to_usdc_swap(self, amount_in_ether):
-        time.sleep(1)
+            return status
+
+    def sign_and_send_tx(self, builded_tx):
+        signed_tx = self.w3.eth.account.sign_transaction(builded_tx, self.acc.key)
+        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction).hex()
+
+        time.sleep(6)
+
+        tx_status = utils.check_tx_status(tx_hash)
+        return tx_status
+
+    # TODO: modify decimals for any token
+    def swap_to_token(self, amount_in_ether):
         amount = Web3.to_wei(amount_in_ether, 'ether')
         pool_eth_price, _ = self.get_pool_eth_price()
         min_amount_received = int(self.mink * pool_eth_price * amount_in_ether * 1e6)
         nonce = self.w3.eth.get_transaction_count(self.acc.address)
-        contract = self.w3.eth.contract(config.zk_syncswap_router_addr, abi=self.router_abi)
+        router = self.w3.eth.contract(ZK_SYNCSWAP_CONTRACTS['router'], abi=self.router_abi)
 
-        deadline = int(time.time() + 1800)
-        args = [[([(config.zk_syncswap_weth_usdc_pool_addr, self.prepare_data_for_swap(self.acc.address, config.zk_weth_addr),
-                    '0x0000000000000000000000000000000000000000',
+        deadline = int(time.time() + 12000)
+        args = [[([(ZK_SYNCSWAP_WETH_USDC_POOL_ADDR, self.prepare_data_for_swap(self.acc.address, ZKSYNC_TOKENS['ETH']),
+                    ZERO_ADDRESS,
                     b'')],
-                  '0x0000000000000000000000000000000000000000',
+                  ZERO_ADDRESS,
                   amount)],
                 min_amount_received,
                 deadline]
 
-        tx = contract.functions.swap(*args)
-        builded_tx = tx.build_transaction({
-            'chainId': config.zksync_chain_id,
-            'from': Web3.to_checksum_address(self.acc.address),
+        tx_data = utils.get_zksync_tx_init_data()
+        tx_data.update({
+            'from': self.acc.address,
             'value': amount,
             'gas': self.gas_for_swap,
-            'nonce': nonce,
-            'maxFeePerGas': config.zksync_base_fee,
-            'maxPriorityFeePerGas': config.zksync_priority_fee
+            'nonce': nonce
         })
 
-        signed_tx = self.w3.eth.account.sign_transaction(builded_tx, self.acc.key)
-        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction).hex()
+        tx = router.functions.swap(*args)
+        builded_tx = tx.build_transaction(tx_data)
 
-        time.sleep(10)
+        status = self.sign_and_send_tx(builded_tx)
 
-        tx_status = utils.check_tx_status(tx_hash)
-        return tx_status
+        return status
 
-    def usdc_to_eth_swap(self, ammount_in_usdc):
-        time.sleep(1)
-        amount = int(ammount_in_usdc * 1e6)
+    # TODO: modify decimals for any token
+    def swap_to_eth(self, ammount_in_token):
+        amount = int(ammount_in_token * 1e6)
         _, pool_eth_price = self.get_pool_eth_price()
-        min_amount_received = int(self.mink * ammount_in_usdc / pool_eth_price * 1e18)
+        min_amount_received = int(self.mink * ammount_in_token / pool_eth_price * 1e18)
         nonce = self.w3.eth.get_transaction_count(self.acc.address)
-        contract = self.w3.eth.contract(config.zk_syncswap_router_addr, abi=self.router_abi)
+        router = self.w3.eth.contract(ZK_SYNCSWAP_CONTRACTS['router'], abi=self.router_abi)
         
-        deadline = int(time.time() + 1800)
-        args = [[([(config.zk_syncswap_weth_usdc_pool_addr, self.prepare_data_for_swap(self.acc.address, config.zk_usdc_addr),
-                    '0x0000000000000000000000000000000000000000',
+        self.check_token_approval(ZK_SYNCSWAP_CONTRACTS['router'], amount)
+
+        deadline = int(time.time() + 12000)
+        args = [[([(ZK_SYNCSWAP_WETH_USDC_POOL_ADDR, self.prepare_data_for_swap(self.acc.address, ZKSYNC_TOKENS['USDC']),
+                    ZERO_ADDRESS,
                     b'')],
-                  config.zk_usdc_addr,
+                  ZKSYNC_TOKENS['USDC'],
                   amount)],
                 min_amount_received,
                 deadline]
 
-        tx = contract.functions.swap(*args)
-        builded_tx = tx.build_transaction({
-            'chainId': config.zksync_chain_id,
-            'from': Web3.to_checksum_address(self.acc.address),
+        tx_data = utils.get_zksync_tx_init_data()
+        tx_data.update({
+            'from': self.acc.address,
             'value': 0,
             'gas': self.gas_for_swap,
-            'nonce': nonce,
-            'maxFeePerGas': config.zksync_base_fee,
-            'maxPriorityFeePerGas': config.zksync_priority_fee
+            'nonce': nonce
         })
 
-        signed_tx = self.w3.eth.account.sign_transaction(builded_tx, self.acc.key)
-        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction).hex()
+        tx = router.functions.swap(*args)
+        builded_tx = tx.build_transaction(tx_data)
 
-        time.sleep(10)
+        status = self.sign_and_send_tx(builded_tx)
 
-        tx_status = utils.check_tx_status(tx_hash)
-        
-        return tx_status
+        return status

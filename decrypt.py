@@ -5,14 +5,14 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-import config
+from config import *
 
 def get_decrypted_acc_info(file_path):
 
     with open(file_path, 'rb') as f:
         encrypted = f.read()
 
-    with open(config.file_password_file_path, 'r') as f:
+    with open(PASSWORD_FILE_PATH, 'r') as f:
         line = f.readline()
         password = line.rstrip('\n')
     

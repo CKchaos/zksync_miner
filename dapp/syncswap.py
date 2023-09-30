@@ -71,9 +71,8 @@ class SyncSwap(SwapOperator):
                 min_amount_out,
                 deadline]
 
-        tx_data = utils.get_zksync_tx_init_data()
+        tx_data = self.get_init_tx_data()
         tx_data.update({
-            'from': self.acc.address,
             'value': amount if from_token == 'ETH' else 0,
             'gas': self.gas_for_swap,
             'nonce': nonce

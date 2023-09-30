@@ -28,6 +28,16 @@ class SwapOperator():
         self.gas_for_swap = utils.usd_to_zk_gas(gas_for_swap, eth_market_price)
         self.mink = (100 - slippage) * 0.01
 
+    def get_init_tx_data(self):
+        init_tx_data = {
+            'from': self.acc.address,
+            'chainId': ZKSYNC_CHAIN_ID,
+            'maxFeePerGas': ZKSYNC_BASE_FEE,
+            'maxPriorityFeePerGas': ZKSYNC_PRIORITY_FEE
+        }
+
+        return init_tx_data
+
     def get_contract(self, contract_addr, abi_path):
         abi = utils.load_abi(abi_path)
         contract = self.w3.eth.contract(contract_addr, abi=abi)
@@ -58,9 +68,8 @@ class SwapOperator():
             print("Perform allowance first ...")
             nonce = self.w3.eth.get_transaction_count(self.acc.address)
 
-            tx_data = utils.get_zksync_tx_init_data()
+            tx_data = self.get_init_tx_data()
             tx_data.update({
-                'from': self.acc.address,
                 'value': 0,
                 'gas': self.gas_for_approve,
                 'nonce': nonce
@@ -73,9 +82,11 @@ class SwapOperator():
 
             status = self.sign_and_send_tx(builded_approve)
 
+            print("Allowance granted!")
+
             return nonce + 1
         
-        print("Allowance confrimed!")
+        print("Allowance confirmed!")
 
         return None
 

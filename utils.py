@@ -4,12 +4,10 @@ import time
 from config import *
 import requests
 
-
 def get_readable_time():
     time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
 
     return time_str
-
 
 def crypto_to_usd(asset = 'ETH'):
     attempt = 0
@@ -27,14 +25,6 @@ def crypto_to_usd(asset = 'ETH'):
             attempt += 1
         
     raise Exception(get_readable_time(), 'Getiing %s market data error.' % asset)
-
-
-def check_crypto_price_range(asset, price, expected_price_range):
-    price_range = expected_price_range[asset]
-
-    if price < price_range[0] or price > price_range[1]:
-        raise Exception(get_readable_time(), '%s market price (%.2f) is out of expected range.' % (asset, price))
-
 
 def usd_to_zk_gas(usd, eth_market_price):
     gas_unit = int(Web3.to_wei(usd / eth_market_price, 'ether') / ZKSYNC_BASE_FEE)
@@ -62,56 +52,6 @@ def check_tx_status(tx_hash, rpc="https://mainnet.era.zksync.io"):
             attempt += 1
     
     raise Exception(get_readable_time(), 'Checking transaction status error.')
-
-
-def zk_token_balance(address, rpc='https://mainnet.era.zksync.io', token_address='0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4', ABI = None):
-    address = Web3.to_checksum_address(address)
-    token_address = Web3.to_checksum_address(token_address)
-
-    attempt = 0
-    while attempt < 3:
-        try:
-            if ABI == None:
-                with open(ERC20_ABI) as jsonabi:
-                    ABI = json.load(jsonabi)
-
-            w3 = Web3(Web3.HTTPProvider(rpc))
-            token = w3.eth.contract(address=token_address, abi=ABI)
-            token_balance = token.functions.balanceOf(address).call()
-
-            return token_balance
-
-        except:
-            time.sleep(5)
-            attempt += 1
-
-    raise Exception(get_readable_time(), 'ERC20 token (%s) balance error.' % token_address)
-
-
-def zk_eth_balance(address):
-    address = Web3.to_checksum_address(address)
-    attempt = 0
-
-    while attempt < 3:
-        try:
-            w3 = Web3(Web3.HTTPProvider(ZKSYNC_ERA_RPC))
-            balance = w3.eth.get_balance(address)
-            return balance
-
-        except:
-            time.sleep(5)
-            attempt += 1
-  
-    raise Exception('ZkSync Eth Balance Error')
-
-def get_zksync_tx_init_data():
-    init_tx = {
-        'chainId': ZKSYNC_CHAIN_ID,
-        'maxFeePerGas': ZKSYNC_BASE_FEE,
-        'maxPriorityFeePerGas': ZKSYNC_PRIORITY_FEE
-    }
-
-    return init_tx
 
 def get_eth_mainnet_gas_price():
     attempt = 0

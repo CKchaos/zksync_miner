@@ -13,10 +13,10 @@ def get_amount(max_amount):
 
     swap_amount = 0.0025 + 0.005 * random.random()
 
-    digit_list = [4, 5, 6, 7]
-    digit_num = random.choices(digit_list, weights=(15, 35, 40, 15), k=1)[0]
+    digit_list = [4, 5, 6, 7, 8]
+    digit_num = random.choices(digit_list, weights=(4, 16, 36, 32, 12), k=1)[0]
     swap_amount = round(swap_amount, digit_num)
-    swap_amount = swap_amount * 1e18
+    swap_amount = Web3.to_wei(swap_amount, 'ether')
 
     if swap_amount > max_amount:
         p = 0.95 + random.random() * 0.03
@@ -35,7 +35,7 @@ def get_wash_pending_time():
 
 def print_tx_staus_info(swap_status, swap_operator_name, swap_amount, unit):
     current_time = utils.get_readable_time()
-    s = "[%s] Swap %.6f %s via %s " % (current_time, swap_amount, unit, swap_operator_name)
+    s = "[%s] Swap %.8f %s via %s " % (current_time, swap_amount, unit, swap_operator_name)
     if swap_status:
         print(s + 'done!')
     else:
@@ -44,8 +44,11 @@ def print_tx_staus_info(swap_status, swap_operator_name, swap_amount, unit):
 if __name__ == '__main__':
     gas_price_limit = 25
 
-    acc_label = 'sgl10'
-    swap_token = 'USDC'
+    operator_name = 'SyncSwap'
+    operator_name = 'PancakeSwap'
+
+    acc_label = 'sgl63'
+    swap_token = 'USDT'
     swap_eth_to_token = 1
     swap_token_to_eth = 1
 
@@ -77,8 +80,12 @@ if __name__ == '__main__':
     for acc_info in account_info:
         account_dict[acc_info['label']] = w3.eth.account.from_key(acc_info['private_key'])
 
-    #swap_operator = PancakeSwap(account_dict[acc_label], gas_for_approve, gas_for_swap, slippage)
-    swap_operator = SyncSwap(account_dict[acc_label], swap_token, gas_for_approve, gas_for_swap, slippage)
+    operator_set = {
+        'SyncSwap': SyncSwap,
+        'PancakeSwap': PancakeSwap,
+    }
+
+    swap_operator = operator_set[operator_name](account_dict[acc_label], swap_token, gas_for_approve, gas_for_swap, slippage)
 
     if swap_eth_to_token:
         eth_balance = swap_operator.get_eth_balance()

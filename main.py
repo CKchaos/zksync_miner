@@ -7,6 +7,32 @@ from dapp.syncswap import SyncSwap
 from dapp.pancakeswap import PancakeSwap
 from decrypt import get_decrypted_acc_info
 
+def get_amount(max_amount):
+    if max_amount < 0.0025 * 1e18:
+        raise Exception(utils.get_readable_time(), 'ETH balance is not enough for swapping.')
+
+    swap_amount = 0.0025 + 0.005 * random.random()
+
+    digit_list = [4, 5, 6, 7]
+    digit_num = random.choices(digit_list, weights=(15, 35, 40, 15), k=1)[0]
+    swap_amount = round(swap_amount, digit_num)
+    swap_amount = swap_amount * 1e18
+
+    if swap_amount > max_amount:
+        p = 0.95 + random.random() * 0.03
+        swap_amount = max_amount * p
+
+    swap_amount = int(swap_amount)
+
+    return swap_amount
+
+def get_wash_pending_time():
+    rand = random.random()
+    add_time = 60 if rand < 0.1 else 0
+    wash_pending_time = 5 + int(60 * random.random()) + add_time
+
+    return wash_pending_time
+
 def print_tx_staus_info(swap_status, swap_operator_name, swap_amount, unit):
     current_time = utils.get_readable_time()
     s = "[%s] Swap %.6f %s via %s " % (current_time, swap_amount, unit, swap_operator_name)
@@ -18,17 +44,16 @@ def print_tx_staus_info(swap_status, swap_operator_name, swap_amount, unit):
 if __name__ == '__main__':
     gas_price_limit = 25
 
-    acc_label = 'sgl32'
-    swap_token = 'SPACE'
+    acc_label = 'sgl10'
+    swap_token = 'USDC'
     swap_eth_to_token = 1
     swap_token_to_eth = 1
-    swap_amount = 0.007
 
     start_pengding_time = 1
 
-    gas_for_approve = 0.24 + random.random() * 0.04
-    gas_for_swap=0.38 + random.random() * 0.04
-    slippage=0.3 +  + random.random() * 0.1
+    gas_for_approve = 0.24
+    gas_for_swap=0.38
+    slippage=0.3
     
     current_time = utils.get_readable_time()
     print(f'[{current_time}] Execute swap for account **< {acc_label} >**')
@@ -56,20 +81,16 @@ if __name__ == '__main__':
     swap_operator = SyncSwap(account_dict[acc_label], swap_token, gas_for_approve, gas_for_swap, slippage)
 
     if swap_eth_to_token:
-        rand = random.random()
-        digit_num = random.randint(1,4)
-        swap_amount = swap_amount + round(rand, digit_num) / 1000
-        swap_amount = int(swap_amount * 1e18)
+        eth_balance = swap_operator.get_eth_balance()
+        swap_amount = get_amount(eth_balance - ETH_MINIMUM_BALANCE)
         swap_status = swap_operator.swap_to_token(swap_amount)
         print_tx_staus_info(swap_status, swap_operator.name, swap_amount / 1e18, 'ETH')
 
     if swap_token_to_eth:
-        rand = random.random()
-        add_time = 60 if rand < 0.1 else 0
-        wash_pending_time = 5 + int(60 * random.random()) + add_time
+        wash_pending_time = get_wash_pending_time()
         print(f'Pending for {wash_pending_time}s ...')
 
-        #time.sleep(wash_pending_time)
+        time.sleep(wash_pending_time)
         swap_amount = swap_operator.get_token_balance()
         swap_status = swap_operator.swap_to_eth(swap_amount)
         print_tx_staus_info(swap_status, swap_operator.name, swap_amount / (10 ** swap_operator.token_decimals), swap_operator.swap_token)

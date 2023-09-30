@@ -5,6 +5,7 @@ from config import *
 import utils
 from dapp.syncswap import SyncSwap
 from dapp.pancakeswap import PancakeSwap
+from dapp.mute import Mute
 from decrypt import get_decrypted_acc_info
 
 def get_amount(max_amount):
@@ -42,14 +43,14 @@ def print_tx_staus_info(swap_status, swap_operator_name, swap_amount, unit):
         print(s + 'pending.')
 
 if __name__ == '__main__':
-    gas_price_limit = 25
 
     operator_name = 'SyncSwap'
     operator_name = 'PancakeSwap'
+    operator_name = 'Mute'
 
     acc_label = 'sgl32'
-    swap_token = 'USDC'
-    swap_eth_to_token = 1
+    swap_token = 'ZKDOGE'
+    swap_eth_to_token = 0
     swap_token_to_eth = 1
 
     assert operator_name in SWAP_TRADABLE_TOKENS
@@ -59,7 +60,7 @@ if __name__ == '__main__':
 
     gas_for_approve = 0.24
     gas_for_swap=0.38
-    slippage=0.3
+    slippage=0.5
     
     current_time = utils.get_readable_time()
     print(f'[{current_time}] Execute swap for account **< {acc_label} >**')
@@ -71,7 +72,7 @@ if __name__ == '__main__':
     mainnet_gas_price = utils.get_eth_mainnet_gas_price()
     current_time = utils.get_readable_time()
     print(f'[{current_time}] ETH gas price is {mainnet_gas_price} gwei.')
-    if mainnet_gas_price > gas_price_limit:
+    if mainnet_gas_price > MAX_GWEI:
         print(f'ETH gas price is too high. Abort task.')
         exit()
 
@@ -86,6 +87,7 @@ if __name__ == '__main__':
     operator_set = {
         'SyncSwap': SyncSwap,
         'PancakeSwap': PancakeSwap,
+        'Mute': Mute,
     }
 
     swap_operator = operator_set[operator_name](account_dict[acc_label], swap_token, gas_for_approve, gas_for_swap, slippage)
@@ -95,6 +97,9 @@ if __name__ == '__main__':
         swap_amount = get_amount(eth_balance - ETH_MINIMUM_BALANCE)
         swap_status = swap_operator.swap_to_token(swap_amount)
         print_tx_staus_info(swap_status, swap_operator.name, swap_amount / 1e18, 'ETH')
+        if not swap_status:
+            print("Buy swap failed, terminated!")
+            exit()
 
     if swap_token_to_eth:
         wash_pending_time = get_wash_pending_time()

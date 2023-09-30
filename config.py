@@ -33,7 +33,6 @@ ZKSYNC_TOKENS = {
     'OT': '0xD0eA21ba66B67bE636De1EC4bd9696EB8C61e9AA',
     'PEPE': '0xFD282F16a64c6D304aC05d1A58Da15bed0467c71',
     'PIKO': '0xf8C6dA1bbdc31Ea5F968AcE76E931685cA7F9962',
-    'PVP': '0xBcF7DA740a4d3e5B6B92f32167D1Ee48A422f955',
     'rETH': '0x32Fd44bB869620C0EF993754c8a00Be67C464806',
     'SIS': '0xdd9f72afED3631a6C85b5369D84875e6c42f1827',
     'SNRK': '0x533b5F887383196C6bc642f83338a69596465307',
@@ -59,7 +58,7 @@ ZK_SYNCSWAP_CONTRACTS = {
 }
 
 ZK_SYNCSWAP_TOKENS = ['BUSD', 'Cheems', 'DOGERA', 'DVF', 'ERA', 'GOVI', 'iZi', 'LUSD', 
-                    'MATIC', 'MAV', 'MUTE', 'OT', 'PEPE', 'PIKO', 'PVP', 'rETH', 'SIS',
+                    'MATIC', 'MAV', 'MUTE', 'OT', 'PEPE', 'PIKO', 'rETH', 'SIS',
                     'SNRK', 'SPACE', 'USDC', 'USDT', 'USD+', 'WBTC', 'ZAT', 'ZKDOGE', 'zkUSD']
 
 #PancakeSwap
@@ -94,4 +93,10 @@ ZK_MAVERICK_CONTRACTS = {
     "factory": "0x2C1a605f843A2E18b7d7772f0Ce23c236acCF7f5"
 }
 
+
+#integration
+SWAP_TRADABLE_TOKENS = {
+    'SyncSwap': ZK_SYNCSWAP_TOKENS,
+    'PancakeSwap': ZK_PANCAKE_TOKENS,
+}
 

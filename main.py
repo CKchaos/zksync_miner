@@ -47,10 +47,13 @@ if __name__ == '__main__':
     operator_name = 'SyncSwap'
     operator_name = 'PancakeSwap'
 
-    acc_label = 'sgl63'
-    swap_token = 'USDT'
+    acc_label = 'sgl32'
+    swap_token = 'USDC'
     swap_eth_to_token = 1
     swap_token_to_eth = 1
+
+    assert operator_name in SWAP_TRADABLE_TOKENS
+    assert swap_token in SWAP_TRADABLE_TOKENS[operator_name]
 
     start_pengding_time = 1
 

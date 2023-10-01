@@ -33,7 +33,6 @@ class SpaceFi(SwapOperator):
 
     def swap(self, from_token, to_token, amount, nonce=None):
         min_amount_out = self.get_min_amount_out(from_token, to_token, amount)
-        print(min_amount_out)
 
         if to_token == 'ETH' and min_amount_out < ETH_OUT_MIN_LIMIT:
             print(f'The balance of {from_token} is too small. Swap Abort!')

@@ -7,6 +7,7 @@ from dapp.syncswap import SyncSwap
 from dapp.pancakeswap import PancakeSwap
 from dapp.mute import Mute
 from dapp.spacefi import SpaceFi
+from dapp.zkswap import zkSwap
 from decrypt import get_decrypted_acc_info
 
 def get_amount(max_amount):
@@ -46,12 +47,13 @@ def print_tx_staus_info(swap_status, swap_operator_name, swap_amount, unit):
 if __name__ == '__main__':
 
     operator_name = 'SyncSwap'
-    #operator_name = 'PancakeSwap'
+    operator_name = 'PancakeSwap'
     #operator_name = 'Mute'
-    operator_name = 'SpaceFi'
+    #operator_name = 'SpaceFi'
+    operator_name = 'zkSwap'
 
     acc_label = 'sgl32'
-    swap_token = 'BUSD'
+    swap_token = 'ZF'
     swap_eth_to_token = 1
     swap_token_to_eth = 1
 
@@ -91,6 +93,7 @@ if __name__ == '__main__':
         'PancakeSwap': PancakeSwap,
         'Mute': Mute,
         'SpaceFi': SpaceFi,
+        'zkSwap': zkSwap,
     }
 
     swap_operator = operator_set[operator_name](account_dict[acc_label], swap_token, gas_for_approve, gas_for_swap, slippage)
@@ -105,10 +108,11 @@ if __name__ == '__main__':
             exit()
 
     if swap_token_to_eth:
-        wash_pending_time = get_wash_pending_time()
-        print(f'Pending for {wash_pending_time}s ...')
+        if swap_eth_to_token:
+            wash_pending_time = get_wash_pending_time()
+            print(f'Pending for {wash_pending_time}s ...')
+            time.sleep(wash_pending_time)
 
-        time.sleep(wash_pending_time)
         swap_amount = swap_operator.get_token_balance()
         swap_status = swap_operator.swap_to_eth(swap_amount)
         print_tx_staus_info(swap_status, swap_operator.name, swap_amount / (10 ** swap_operator.token_decimals), swap_operator.swap_token)

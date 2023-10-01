@@ -6,6 +6,7 @@ import utils
 from dapp.syncswap import SyncSwap
 from dapp.pancakeswap import PancakeSwap
 from dapp.mute import Mute
+from dapp.spacefi import SpaceFi
 from decrypt import get_decrypted_acc_info
 
 def get_amount(max_amount):
@@ -45,12 +46,13 @@ def print_tx_staus_info(swap_status, swap_operator_name, swap_amount, unit):
 if __name__ == '__main__':
 
     operator_name = 'SyncSwap'
-    operator_name = 'PancakeSwap'
-    operator_name = 'Mute'
+    #operator_name = 'PancakeSwap'
+    #operator_name = 'Mute'
+    operator_name = 'SpaceFi'
 
     acc_label = 'sgl32'
-    swap_token = 'ZKDOGE'
-    swap_eth_to_token = 0
+    swap_token = 'BUSD'
+    swap_eth_to_token = 1
     swap_token_to_eth = 1
 
     assert operator_name in SWAP_TRADABLE_TOKENS
@@ -88,6 +90,7 @@ if __name__ == '__main__':
         'SyncSwap': SyncSwap,
         'PancakeSwap': PancakeSwap,
         'Mute': Mute,
+        'SpaceFi': SpaceFi,
     }
 
     swap_operator = operator_set[operator_name](account_dict[acc_label], swap_token, gas_for_approve, gas_for_swap, slippage)

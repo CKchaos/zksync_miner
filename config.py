@@ -96,6 +96,15 @@ ZK_MUTE_CONTRACTS = {
 
 ZK_MUTE_TOKENS = ['MUTE', 'MVX', 'USDC', 'WBTC', 'WISP', 'ZKDOGE']
 
+#SpaceFi
+SPACEFI_ROUTER_ABI = 'abi/spacefi/router.json'
+
+ZK_SPACEFI_CONTRACTS = {
+    "router": "0xbE7D1FD1f6748bbDefC4fbaCafBb11C6Fc506d1d"
+}
+
+ZK_SPACEFI_TOKENS = ['BUSD', 'SPACE', 'USDC', 'USDT', 'WBTC']
+
 #Maverick
 MAVERICK_FACTORY_ABI = 'abi/maverick/maverick_pool.json'
 MAVERICK_ROUTER_ABI = ''
@@ -111,5 +120,6 @@ SWAP_TRADABLE_TOKENS = {
     'SyncSwap': ZK_SYNCSWAP_TOKENS,
     'PancakeSwap': ZK_PANCAKE_TOKENS,
     'Mute': ZK_MUTE_TOKENS,
+    'SpaceFi': ZK_SPACEFI_TOKENS,
 }
 

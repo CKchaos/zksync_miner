@@ -115,6 +115,15 @@ ZK_ZKSWAP_CONTRACTS = {
 
 ZK_ZKSWAP_TOKENS = ['BUSD', 'USDC', 'USDT', 'WBTC', 'ZF']
 
+#Velocore
+VELOCORE_ROUTER_ABI = 'abi/velocore/router.json'
+
+ZK_VELOCORE_CONTRACTS = {
+    "router": "0xf5E67261CB357eDb6C7719fEFAFaaB280cB5E2A6"
+}
+
+ZK_VELOCORE_TOKENS = ['USDC']
+
 #Maverick
 MAVERICK_FACTORY_ABI = 'abi/maverick/maverick_pool.json'
 MAVERICK_ROUTER_ABI = ''
@@ -124,6 +133,14 @@ ZK_MAVERICK_CONTRACTS = {
     "factory": "0x2C1a605f843A2E18b7d7772f0Ce23c236acCF7f5"
 }
 
+#Eralend
+ERALEND_ABI = 'abi/eralend/abi.json'
+
+ZK_ERALEND_CONTRACTS = {
+    "eETH": "0x22D8b71599e14F20a49a397b88c1C878c86F5579",
+    "eUSDC": "0x90973213E2a230227BD7CCAfB30391F4a52439ee",
+    "unitroller": '0xC955d5fa053d88E7338317cc6589635cD5B2cf09'
+}
 
 #integration
 SWAP_TRADABLE_TOKENS = {
@@ -132,5 +149,6 @@ SWAP_TRADABLE_TOKENS = {
     'Mute': ZK_MUTE_TOKENS,
     'SpaceFi': ZK_SPACEFI_TOKENS,
     'zkSwap': ZK_ZKSWAP_TOKENS,
+    'Velocore': ZK_VELOCORE_TOKENS,
 }
 

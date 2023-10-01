@@ -1,5 +1,6 @@
 from web3 import Web3
 import random
+import time
 
 from config import *
 import utils
@@ -49,28 +50,31 @@ if __name__ == '__main__':
     operator_name = 'SyncSwap'
     operator_name = 'PancakeSwap'
     #operator_name = 'Mute'
-    #operator_name = 'SpaceFi'
+    operator_name = 'SpaceFi'
     operator_name = 'zkSwap'
 
-    acc_label = 'sgl32'
+    acc_label = 'sgl6'
     swap_token = 'ZF'
     swap_eth_to_token = 1
     swap_token_to_eth = 1
 
-    assert operator_name in SWAP_TRADABLE_TOKENS
-    assert swap_token in SWAP_TRADABLE_TOKENS[operator_name]
-
-    start_pengding_time = 1
+    start_pengding_time = 3
 
     gas_for_approve = 0.24
     gas_for_swap=0.38
     slippage=0.5
-    
+
+    account_info = get_decrypted_acc_info(ACCOUNT_INFO_FILE_PATH)
+    account_list = [a['label'] for a in account_info]
+
+    assert operator_name in SWAP_TRADABLE_TOKENS
+    assert swap_token in SWAP_TRADABLE_TOKENS[operator_name]
+    assert acc_label in account_list
+
     current_time = utils.get_readable_time()
     print(f'[{current_time}] Execute swap for account **< {acc_label} >**')
     print(f'Pending for {start_pengding_time}s ...')
 
-    import time
     time.sleep(start_pengding_time)
 
     mainnet_gas_price = utils.get_eth_mainnet_gas_price()
@@ -81,9 +85,7 @@ if __name__ == '__main__':
         exit()
 
     w3 = Web3(Web3.HTTPProvider(ZKSYNC_ERA_RPC))
-
-    account_info = get_decrypted_acc_info(ACCOUNT_INFO_FILE_PATH)
-
+    
     account_dict = {}
     for acc_info in account_info:
         account_dict[acc_info['label']] = w3.eth.account.from_key(acc_info['private_key'])

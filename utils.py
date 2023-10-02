@@ -64,7 +64,7 @@ def get_eth_mainnet_gas_price():
             gas_price = w3.eth.gas_price
             gas_price_in_gwei = w3.from_wei(gas_price, 'gwei')
 
-            return gas_price_in_gwei
+            return float(gas_price_in_gwei)
 
         except:
             time.sleep(3)

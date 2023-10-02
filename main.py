@@ -89,7 +89,7 @@ def execute_task(acc_label, operator_name, swap_token, swap_eth_to_token, swap_t
     assert acc_label in account_list
 
     current_time = utils.get_readable_time()
-    print(f'[{current_time}] Execute swap for account **< {acc_label} >**')
+    print(f'\n[{current_time}] Execute swap for account **< {acc_label} >**')
     print(f'Pending for {start_pengding_time}s ...')
     print(f'Estimated execution time: {utils.get_readable_time(time.time() + start_pengding_time)}')
 
@@ -130,27 +130,41 @@ if __name__ == '__main__':
 
     operator_list = list(operator_set.keys())
 
-    total_time = 14000
+    total_time = 28800
     task_accounts = [
-        'espoo7',
-        'sgl1',
-        'sgl5',
+        'espoo4',
+        'espoo5',
+        'sgl3',
+        'sgl7',
+        'sgl8',
         'sgl10',
+        'sgl13',
+        'sgl14',
+        'sgl18',
         'sgl17',
-        'sgl27',
-        'sgl34',
-        'sgl39',
-        'sgl46',
-        'sgl54',
+        'sgl22',
+        'sgl24',
+        'sgl26',
+        'sgl28',
+        'sgl29',
+        'sgl33',
+        'sgl43',
+        'sgl49',
+        'sgl52',
+        'sgl56',
+        'sgl59',
         'sgl63',
+        'sgl67',
+        'sgl76',
         'sgl91',
     ]
     random.shuffle(task_accounts)
 
     task_num = len(task_accounts)
+    print('Tasks:', task_num)
 
-    randomlist = sorted(random.sample(range(total_time), task_num - 1))
-    randomlist.append(total_time)
+    randomlist = sorted(random.sample(range(total_time), task_num - 2))
+    randomlist = [1] + randomlist + [total_time]
 
     pending_time_list = [randomlist[0]]
 

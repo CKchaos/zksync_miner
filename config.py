@@ -52,6 +52,9 @@ ZKSYNC_TOKENS = {
     'zkUSD': '0xfC7E56298657B002b3e656400E746b7212912757',
 }
 
+#WETH
+WETH_ABI = 'abi/weth/abi.json'
+
 #SyncSwap
 SYNCSWAP_ROUTER_ABI = 'abi/syncswap/syncswap_router_abi.json'
 SYNCSWAP_POOL_FACTORY_ABI = 'abi/syncswap/syncswap_pool_factory_abi.json'

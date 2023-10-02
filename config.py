@@ -146,6 +146,11 @@ ZK_ERALEND_CONTRACTS = {
     "unitroller": '0xC955d5fa053d88E7338317cc6589635cD5B2cf09'
 }
 
+#ArchiSwap
+ZK_ARCHISWAP_CONTRACTS = {
+    "faucet": "0x4E8a60Eade9e6967d2ee5bF6aa46eEce10E9809e"
+}
+
 #integration
 SWAP_TRADABLE_TOKENS = {
     'SyncSwap': ZK_SYNCSWAP_TOKENS,

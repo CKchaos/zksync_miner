@@ -130,13 +130,15 @@ ZK_VELOCORE_CONTRACTS = {
 ZK_VELOCORE_TOKENS = ['USDC']
 
 #Maverick
-MAVERICK_FACTORY_ABI = 'abi/maverick/maverick_pool.json'
-MAVERICK_ROUTER_ABI = ''
+MAVERICK_POOL_ABI = 'abi/maverick/pool.json'
+MAVERICK_ROUTER_ABI = 'abi/maverick/router.json'
 
 ZK_MAVERICK_CONTRACTS = {
     "router": "0x39E098A153Ad69834a9Dac32f0FCa92066aD03f4",
     "factory": "0x2C1a605f843A2E18b7d7772f0Ce23c236acCF7f5"
 }
+
+ZK_MAVERICK_TOKENS = ['USDC']
 
 #Eralend
 ERALEND_ABI = 'abi/eralend/abi.json'
@@ -172,6 +174,15 @@ ZK_ZNS_CONTRACTs = {
 
 ZNS_VOCAB_PATH = "data/zns_vocab"
 
+#Tevaera
+TEVAERA_ID_ABI = 'abi/tevaera/id.json'
+TEVAERA_NFT_ABI = 'abi/tevaera/nft.json'
+
+ZK_TEVAERA_CONTRACTs = {
+    "id": "0xd29Aa7bdD3cbb32557973daD995A3219D307721f",
+    "nft": "0x50B2b7092bCC15fbB8ac74fE9796Cf24602897Ad"
+}
+
 #integration
 SWAP_TRADABLE_TOKENS = {
     'SyncSwap': ZK_SYNCSWAP_TOKENS,
@@ -180,5 +191,6 @@ SWAP_TRADABLE_TOKENS = {
     'SpaceFi': ZK_SPACEFI_TOKENS,
     'zkSwap': ZK_ZKSWAP_TOKENS,
     'Velocore': ZK_VELOCORE_TOKENS,
+    'Maverick': ZK_MAVERICK_TOKENS,
 }
 

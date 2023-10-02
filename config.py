@@ -162,7 +162,8 @@ ZK_ARCHISWAP_CONTRACTS = {
 }
 
 #ZNS
-ZNS_ABI = 'abi/zns/abi.json'
+ZNS_REGISTER_ABI = 'abi/zns/register.json'
+ZNS_MANAGER_ABI = 'abi/zns/manager.json'
 
 ZK_ZNS_CONTRACTs = {
     "register": "0xCBE2093030F485adAaf5b61deb4D9cA8ADEAE509",

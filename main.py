@@ -66,6 +66,11 @@ def print_tx_staus_info(swap_status, swap_operator_name, swap_amount, from_token
     else:
         print(s + 'pending.')
 
+def get_gas_factor(gas_price):
+    gas_factor = 1 if gas_price < TARGET_GAS_PRICE else gas_price / TARGET_GAS_PRICE * 0.5 + 0.5
+
+    return gas_factor
+
 def check_eth_gas():
     retry_pending_time = 300
     while(True):
@@ -76,7 +81,7 @@ def check_eth_gas():
             print(f'ETH gas price is too high.\nPending for {retry_pending_time}s ...')
             time.sleep(retry_pending_time)
         else:
-            break
+            return mainnet_gas_price
 
 def execute_task(acc_label, operator_name, swap_token, swap_eth_to_token, swap_token_to_eth, start_pengding_time):
     assert operator_name in SWAP_TRADABLE_TOKENS
@@ -90,9 +95,11 @@ def execute_task(acc_label, operator_name, swap_token, swap_eth_to_token, swap_t
 
     time.sleep(start_pengding_time)
 
-    check_eth_gas()
+    gas_price = check_eth_gas()
 
-    swap_operator = operator_set[operator_name](account_dict[acc_label], swap_token, gas_for_approve, gas_for_swap, slippage)
+    f = get_gas_factor(gas_price)
+
+    swap_operator = operator_set[operator_name](account_dict[acc_label], swap_token, gas_for_approve * f, gas_for_swap * f, slippage)
 
     if swap_eth_to_token == 0 and swap_token == 'USDC':
         balance = swap_operator.get_token_balance()

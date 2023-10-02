@@ -23,7 +23,7 @@ class EraLend(BaseOperator):
         } 
         self.collateral_contract = self.get_contract(ZK_ERALEND_CONTRACTS["unitroller"], ERALEND_ABI)
 
-        self.withdrawl_minimum = {
+        self.withdrawal_minimum = {
             'ETH': 100000000000000,
             'USDC': 300000
         }
@@ -68,7 +68,7 @@ class EraLend(BaseOperator):
 
         amount = self.get_deposit_amount(token)
 
-        if amount > self.withdrawl_minimum[token]:
+        if amount > self.withdrawal_minimum[token]:
             nonce = self.w3.eth.get_transaction_count(self.acc.address)
 
             tx_data = self.get_init_tx_data()

@@ -11,6 +11,27 @@ from dapp.spacefi import SpaceFi
 from dapp.zkswap import zkSwap
 from decrypt import get_decrypted_acc_info
 
+account_info = get_decrypted_acc_info(ACCOUNT_INFO_FILE_PATH)
+account_list = [a['label'] for a in account_info]
+
+w3 = Web3(Web3.HTTPProvider(ZKSYNC_ERA_RPC))
+    
+account_dict = {}
+for acc_info in account_info:
+    account_dict[acc_info['label']] = w3.eth.account.from_key(acc_info['private_key'])
+
+operator_set = {
+    'SyncSwap': SyncSwap,
+    'PancakeSwap': PancakeSwap,
+    'Mute': Mute,
+    'SpaceFi': SpaceFi,
+    'zkSwap': zkSwap,
+}
+
+gas_for_approve = 0.24
+gas_for_swap=0.38
+slippage=0.5
+
 def get_amount(max_amount):
     if max_amount < 0.0025 * 1e18:
         raise Exception(utils.get_readable_time(), 'ETH balance is not enough for swapping.')
@@ -45,28 +66,19 @@ def print_tx_staus_info(swap_status, swap_operator_name, swap_amount, unit):
     else:
         print(s + 'pending.')
 
-if __name__ == '__main__':
+def check_eth_gas():
+    retry_pending_time = 300
+    while(True):
+        mainnet_gas_price = utils.get_eth_mainnet_gas_price()
+        current_time = utils.get_readable_time()
+        print(f'[{current_time}] ETH gas price is {mainnet_gas_price} gwei.')
+        if mainnet_gas_price > MAX_GWEI:
+            print(f'ETH gas price is too high.\nPending for {retry_pending_time}s ...')
+            time.sleep(retry_pending_time)
+        else:
+            break
 
-    operator_name = 'SyncSwap'
-    operator_name = 'PancakeSwap'
-    #operator_name = 'Mute'
-    operator_name = 'SpaceFi'
-    operator_name = 'zkSwap'
-
-    acc_label = 'sgl6'
-    swap_token = 'ZF'
-    swap_eth_to_token = 1
-    swap_token_to_eth = 1
-
-    start_pengding_time = 3
-
-    gas_for_approve = 0.24
-    gas_for_swap=0.38
-    slippage=0.5
-
-    account_info = get_decrypted_acc_info(ACCOUNT_INFO_FILE_PATH)
-    account_list = [a['label'] for a in account_info]
-
+def execute_task(acc_label, operator_name, swap_token, swap_eth_to_token, swap_token_to_eth, start_pengding_time):
     assert operator_name in SWAP_TRADABLE_TOKENS
     assert swap_token in SWAP_TRADABLE_TOKENS[operator_name]
     assert acc_label in account_list
@@ -77,28 +89,15 @@ if __name__ == '__main__':
 
     time.sleep(start_pengding_time)
 
-    mainnet_gas_price = utils.get_eth_mainnet_gas_price()
-    current_time = utils.get_readable_time()
-    print(f'[{current_time}] ETH gas price is {mainnet_gas_price} gwei.')
-    if mainnet_gas_price > MAX_GWEI:
-        print(f'ETH gas price is too high. Abort task.')
-        exit()
-
-    w3 = Web3(Web3.HTTPProvider(ZKSYNC_ERA_RPC))
-    
-    account_dict = {}
-    for acc_info in account_info:
-        account_dict[acc_info['label']] = w3.eth.account.from_key(acc_info['private_key'])
-
-    operator_set = {
-        'SyncSwap': SyncSwap,
-        'PancakeSwap': PancakeSwap,
-        'Mute': Mute,
-        'SpaceFi': SpaceFi,
-        'zkSwap': zkSwap,
-    }
+    check_eth_gas()
 
     swap_operator = operator_set[operator_name](account_dict[acc_label], swap_token, gas_for_approve, gas_for_swap, slippage)
+
+    if swap_eth_to_token == 0 and swap_token == 'USDC':
+        balance = swap_operator.get_token_balance()
+        if balance < USDC_SWAP_MIN_LIMIT:
+            swap_eth_to_token = 1
+            print('Buy USDC first...')
 
     if swap_eth_to_token:
         eth_balance = swap_operator.get_eth_balance()
@@ -107,7 +106,7 @@ if __name__ == '__main__':
         print_tx_staus_info(swap_status, swap_operator.name, swap_amount / 1e18, 'ETH')
         if not swap_status:
             print("Buy swap failed, terminated!")
-            exit()
+            return
 
     if swap_token_to_eth:
         if swap_eth_to_token:
@@ -118,4 +117,60 @@ if __name__ == '__main__':
         swap_amount = swap_operator.get_token_balance()
         swap_status = swap_operator.swap_to_eth(swap_amount)
         print_tx_staus_info(swap_status, swap_operator.name, swap_amount / (10 ** swap_operator.token_decimals), swap_operator.swap_token)
+
+if __name__ == '__main__':
+
+    operator_list = list(operator_set.keys())
+
+    total_time = 10800
+    task_accounts = [
+        'sgl34',
+        'sgl16',
+        'sgl25',
+        'sgl63',
+        'sgl42',
+        'sgl37',
+        'sgl54',
+        'sgl91',
+    ]
+    random.shuffle(task_accounts)
+
+    task_num = len(task_accounts)
+
+    randomlist = sorted(random.sample(range(total_time), task_num - 1))
+    randomlist.append(total_time)
+
+    pending_time_list = [randomlist[0]]
+
+    for i in range(1, task_num):
+        pending_time_list.append(randomlist[i] - randomlist[i - 1])        
+
+    task_args = []
+    for i, account in enumerate(task_accounts):
+        operator_name = random.choice(operator_list)
+        swap_token = random.choice(SWAP_TRADABLE_TOKENS[operator_name])
+
+        if random.random() < 0.5:
+            swap_token = 'USDC'
+
+        swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(40, 30, 30), k=1)[0]
         
+        if swap_token != 'USDC':
+            swap_mode = (1, 1)
+
+        args = {
+            'acc_label': account,
+            'operator_name': operator_name,
+            'swap_token': swap_token,
+            'swap_eth_to_token': swap_mode[0],
+            'swap_token_to_eth': swap_mode[1],
+            'start_pengding_time': pending_time_list[i]
+        }
+    
+        task_args.append(args)
+
+    for i in range(task_num):
+        print(task_args[i])
+
+    for i in range(task_num):
+        execute_task(**task_args[i])

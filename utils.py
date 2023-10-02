@@ -4,8 +4,10 @@ import time
 from config import *
 import requests
 
-def get_readable_time():
-    time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+def get_readable_time(t=None):
+    if t == None:
+        t = time.time()
+    time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(t))
 
     return time_str
 

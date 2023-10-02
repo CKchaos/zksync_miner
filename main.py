@@ -58,9 +58,9 @@ def get_wash_pending_time():
 
     return wash_pending_time
 
-def print_tx_staus_info(swap_status, swap_operator_name, swap_amount, unit):
+def print_tx_staus_info(swap_status, swap_operator_name, swap_amount, from_token, to_token):
     current_time = utils.get_readable_time()
-    s = "[%s] Swap %.8f %s via %s " % (current_time, swap_amount, unit, swap_operator_name)
+    s = "[%s] Swap %.8f %s for %s via %s " % (current_time, swap_amount, from_token, to_token, swap_operator_name)
     if swap_status:
         print(s + 'done!')
     else:
@@ -86,6 +86,7 @@ def execute_task(acc_label, operator_name, swap_token, swap_eth_to_token, swap_t
     current_time = utils.get_readable_time()
     print(f'[{current_time}] Execute swap for account **< {acc_label} >**')
     print(f'Pending for {start_pengding_time}s ...')
+    print(f'Estimated execution time: {utils.get_readable_time(time.time() + start_pengding_time)}')
 
     time.sleep(start_pengding_time)
 
@@ -97,13 +98,13 @@ def execute_task(acc_label, operator_name, swap_token, swap_eth_to_token, swap_t
         balance = swap_operator.get_token_balance()
         if balance < USDC_SWAP_MIN_LIMIT:
             swap_eth_to_token = 1
-            print('Buy USDC first...')
+            print('Buy USDC first ...')
 
     if swap_eth_to_token:
         eth_balance = swap_operator.get_eth_balance()
         swap_amount = get_amount(eth_balance - ETH_MINIMUM_BALANCE)
         swap_status = swap_operator.swap_to_token(swap_amount)
-        print_tx_staus_info(swap_status, swap_operator.name, swap_amount / 1e18, 'ETH')
+        print_tx_staus_info(swap_status, swap_operator.name, swap_amount / 1e18, 'ETH', swap_operator.swap_token)
         if not swap_status:
             print("Buy swap failed, terminated!")
             return
@@ -116,21 +117,25 @@ def execute_task(acc_label, operator_name, swap_token, swap_eth_to_token, swap_t
 
         swap_amount = swap_operator.get_token_balance()
         swap_status = swap_operator.swap_to_eth(swap_amount)
-        print_tx_staus_info(swap_status, swap_operator.name, swap_amount / (10 ** swap_operator.token_decimals), swap_operator.swap_token)
+        print_tx_staus_info(swap_status, swap_operator.name, swap_amount / (10 ** swap_operator.token_decimals), swap_operator.swap_token, 'ETH')
 
 if __name__ == '__main__':
 
     operator_list = list(operator_set.keys())
 
-    total_time = 10800
+    total_time = 14000
     task_accounts = [
+        'espoo7',
+        'sgl1',
+        'sgl5',
+        'sgl10',
+        'sgl17',
+        'sgl27',
         'sgl34',
-        'sgl16',
-        'sgl25',
-        'sgl63',
-        'sgl42',
-        'sgl37',
+        'sgl39',
+        'sgl46',
         'sgl54',
+        'sgl63',
         'sgl91',
     ]
     random.shuffle(task_accounts)
@@ -147,6 +152,8 @@ if __name__ == '__main__':
 
     task_args = []
     for i, account in enumerate(task_accounts):
+        assert account in account_list
+
         operator_name = random.choice(operator_list)
         swap_token = random.choice(SWAP_TRADABLE_TOKENS[operator_name])
 

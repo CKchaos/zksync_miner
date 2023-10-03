@@ -136,6 +136,10 @@ if __name__ == '__main__':
         pending_time_list = get_pending_time_list(epoch_time, epoch_task_num)
         empty_accounts = get_empty_accounts(account_list)
 
+        if len(empty_accounts) < epoch_task_num:
+            print("\nDeposit task finished!")
+            exit()
+
         task_accounts = get_task_accounts(empty_accounts, epoch_task_num)
 
         for i, acc in enumerate(task_accounts):

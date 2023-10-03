@@ -147,8 +147,9 @@ if __name__ == '__main__':
 
             withdrawal(funding_api, acc['address'], amount)
 
-            print(f'Pending for {pending_time_list[i]}s ...')
+            print(f'\nPending for {pending_time_list[i]}s ...')
             print(f'Estimated time for next execution: {utils.get_readable_time(time.time() + pending_time_list[i])}')
+            time.sleep(pending_time_list[i])
 
 
 

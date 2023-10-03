@@ -83,7 +83,7 @@ def check_eth_gas():
         else:
             return mainnet_gas_price
 
-def execute_task(acc_label, operator_name, swap_token, swap_eth_to_token, swap_token_to_eth, start_pengding_time):
+def execute_task(acc_label, operator_name, swap_token, swap_mode, start_pengding_time):
     assert operator_name in SWAP_TRADABLE_TOKENS
     assert swap_token in SWAP_TRADABLE_TOKENS[operator_name]
     assert acc_label in account_list
@@ -101,13 +101,18 @@ def execute_task(acc_label, operator_name, swap_token, swap_eth_to_token, swap_t
 
     swap_operator = operator_set[operator_name](account_dict[acc_label], swap_token, gas_for_approve * f, gas_for_swap * f, slippage)
 
-    if swap_eth_to_token == 0 and swap_token == 'USDC':
+    if swap_token == 'USDC':
         balance = swap_operator.get_token_balance()
-        if balance < USDC_SWAP_MIN_LIMIT:
-            swap_eth_to_token = 1
+        if balance > USDC_SWAP_MIN_LIMIT:
+            if random.random() > 0.5:
+                swap_mode = (0, 1)
+                print('Sell USDC this time ...')
+        elif swap_mode[0] == 0:
+            swap_mode = (1, 1)
             print('Buy USDC first ...')
+        
 
-    if swap_eth_to_token:
+    if swap_mode[0]:
         eth_balance = swap_operator.get_eth_balance()
         swap_amount = get_amount(eth_balance - ETH_MINIMUM_BALANCE)
         swap_status = swap_operator.swap_to_token(swap_amount)
@@ -116,8 +121,8 @@ def execute_task(acc_label, operator_name, swap_token, swap_eth_to_token, swap_t
             print("Buy swap failed, terminated!")
             return
 
-    if swap_token_to_eth:
-        if swap_eth_to_token:
+    if swap_mode[1]:
+        if swap_mode[0]:
             wash_pending_time = get_wash_pending_time()
             print(f'Pending for {wash_pending_time}s ...')
             time.sleep(wash_pending_time)
@@ -130,33 +135,17 @@ if __name__ == '__main__':
 
     operator_list = list(operator_set.keys())
 
-    total_time = 28800
+    total_time = 14000
     task_accounts = [
-        'espoo4',
-        'espoo5',
-        'sgl3',
-        'sgl7',
-        'sgl8',
-        'sgl10',
-        'sgl13',
-        'sgl14',
-        'sgl18',
-        'sgl17',
-        'sgl22',
-        'sgl24',
-        'sgl26',
-        'sgl28',
-        'sgl29',
-        'sgl33',
-        'sgl43',
-        'sgl49',
-        'sgl52',
-        'sgl56',
-        'sgl59',
-        'sgl63',
-        'sgl67',
-        'sgl76',
-        'sgl91',
+        'espoo3',
+        'espoo8',
+        'sgl9',
+        'sgl16',
+        'sgl25',
+        'sgl30',
+        'sgl44',
+        'sgl47',
+        'sgl48',
     ]
     random.shuffle(task_accounts)
 
@@ -181,7 +170,7 @@ if __name__ == '__main__':
         if random.random() < 0.5:
             swap_token = 'USDC'
 
-        swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(40, 30, 30), k=1)[0]
+        swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(40, 40, 20), k=1)[0]
         
         if swap_token != 'USDC':
             swap_mode = (1, 1)
@@ -190,8 +179,7 @@ if __name__ == '__main__':
             'acc_label': account,
             'operator_name': operator_name,
             'swap_token': swap_token,
-            'swap_eth_to_token': swap_mode[0],
-            'swap_token_to_eth': swap_mode[1],
+            'swap_mode': swap_mode,
             'start_pengding_time': pending_time_list[i]
         }
     

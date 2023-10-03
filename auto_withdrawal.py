@@ -2,7 +2,6 @@ import os
 import time
 import random
 from web3 import Web3
-from dotenv import load_dotenv
 import numpy as np
 
 import okx.Funding as Funding
@@ -28,11 +27,13 @@ def get_account_list(start_idx):
     return account_list
 
 def get_funding_api():
-    load_dotenv()
+    OKX_API_PATH = 'data/okx_api_x_py'
 
-    api_key = os.getenv("OKX_API_KEY")
-    secret_key = os.getenv("OKX_API_SECRET")
-    passphrase = os.getenv("OKX_API_PARAPHRASE")
+    okx_api = get_decrypted_acc_info(OKX_API_PATH)
+
+    api_key = okx_api["API_KEY"]
+    secret_key = okx_api["API_SECRET"]
+    passphrase = okx_api["API_PARAPHRASE"]
 
     flag = "0"
 

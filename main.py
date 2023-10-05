@@ -15,7 +15,8 @@ account_info = get_decrypted_acc_info(ACCOUNT_INFO_FILE_PATH)
 account_list = [a['label'] for a in account_info]
 
 w3 = Web3(Web3.HTTPProvider(ZKSYNC_ERA_RPC))
-    
+
+# TODO: add blacklist
 account_dict = {}
 for acc_info in account_info:
     account_dict[acc_info['label']] = w3.eth.account.from_key(acc_info['private_key'])
@@ -89,12 +90,13 @@ def execute_task(acc_label, operator_name, swap_token, swap_mode, start_pengding
     assert acc_label in account_list
 
     current_time = utils.get_readable_time()
-    print(f'\n[{current_time}] Execute swap for account **< {acc_label} >**')
+    print(f'[{current_time}] Execute swap for account **< {acc_label} >**')
     print(f'Pending for {start_pengding_time}s ...')
     print(f'Estimated execution time: {utils.get_readable_time(time.time() + start_pengding_time)}')
 
     time.sleep(start_pengding_time)
 
+    # TODO: check gas before every tx
     gas_price = check_eth_gas()
 
     f = get_gas_factor(gas_price)
@@ -135,19 +137,38 @@ if __name__ == '__main__':
 
     operator_list = list(operator_set.keys())
 
-    total_time = 14000
+    total_time = 14400
     task_accounts = [
         'espoo3',
-        'espoo8',
-        'sgl9',
-        'sgl16',
-        'sgl25',
-        'sgl30',
-        'sgl44',
+        'espoo7',
+        'sgl10',
+        'sgl15',
+        'sgl18',
+        'sgl24',
+        'sgl27',
+        'sgl33',
+        'sgl37',
+        'sgl39',
+        'sgl41',
+        'sgl45',
         'sgl47',
-        'sgl48',
+        'sgl49',
+        'sgl52',
+        'sgl55',
+        'sgl59',
+        'sgl65',
+        'sgl69',
+        'sgl83',
+        'sgl103',
+        'sgl125',
     ]
-    random.shuffle(task_accounts)
+    account_list1 = task_accounts[::2]
+    account_list2 = task_accounts[1::2]
+
+    random.shuffle(account_list1)
+    random.shuffle(account_list2)
+
+    task_accounts = account_list1 + account_list2
 
     task_num = len(task_accounts)
     print('Tasks:', task_num)
@@ -189,4 +210,8 @@ if __name__ == '__main__':
         print(task_args[i])
 
     for i in range(task_num):
+        print(f'\nTask {i + 1}/{task_num}:')
         execute_task(**task_args[i])
+
+    current_time = utils.get_readable_time()
+    print(f"[{current_time}] All tasks finished!")

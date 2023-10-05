@@ -42,15 +42,24 @@ def get_funding_api():
     return funding_api
 
 def get_pending_time_list(epoch_time, epoch_task_num):
-    total_time = int(epoch_time + 7200 * random.random())
-    randomlist = sorted(random.sample(range(epoch_time), epoch_task_num - 1))
-    randomlist.append(total_time)
-
-    pending_time_list = [randomlist[0]]
-    for i in range(1, epoch_task_num):
-        pending_time_list.append(randomlist[i] - randomlist[i - 1]) 
+    total_time = int(epoch_time + 18000 * random.random())
+    unit_time = int(total_time / epoch_task_num)
+    rand = np.random.rand(epoch_task_num)
     
-    return pending_time_list
+    randomlist = np.zeros(epoch_task_num)
+    for i in range(epoch_task_num - 1):
+        randomlist[i] = 1 - rand[i] + rand[i + 1]
+    randomlist[-1] = 1 - rand[-1] + rand[0]
+    
+    max_idx = np.argmax(randomlist)
+    min_idx = np.argmin(randomlist)
+    
+    randomlist[max_idx] = randomlist[max_idx] * 1.1
+    randomlist[min_idx] = randomlist[min_idx] * 0.85
+    
+    randomlist = np.array(randomlist * unit_time, dtype='int64')
+
+    return list(randomlist)
 
 def get_empty_accounts(account_list):
     empty_accounts = []
@@ -124,7 +133,7 @@ def withdrawal(funding_api, to_addr, amount):
 
 if __name__ == '__main__':
 
-    epoch_time = 80000
+    epoch_time = 76000
     epoch_task_num = 6
 
     start_idx = 57

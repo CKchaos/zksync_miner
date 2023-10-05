@@ -2,6 +2,7 @@ from web3 import Web3
 import random
 import time
 
+from logger import logging
 from config import *
 import utils
 from dapp.syncswap import SyncSwap
@@ -60,12 +61,13 @@ def get_wash_pending_time():
     return wash_pending_time
 
 def print_tx_staus_info(swap_status, swap_operator_name, swap_amount, from_token, to_token):
-    current_time = utils.get_readable_time()
-    s = "[%s] Swap %.8f %s for %s via %s " % (current_time, swap_amount, from_token, to_token, swap_operator_name)
+    s = "Swap %.8f %s for %s via %s " % (swap_amount, from_token, to_token, swap_operator_name)
     if swap_status:
-        print(s + 'done!')
+        s = s + 'done!'
     else:
-        print(s + 'pending.')
+        s = s + 'pending.'
+    
+    logging.info(s)
 
 def get_gas_factor(gas_price):
     gas_factor = 1 if gas_price < TARGET_GAS_PRICE else gas_price / TARGET_GAS_PRICE * 0.5 + 0.5
@@ -76,8 +78,7 @@ def check_eth_gas():
     retry_pending_time = 300
     while(True):
         mainnet_gas_price = utils.get_eth_mainnet_gas_price()
-        current_time = utils.get_readable_time()
-        print(f'[{current_time}] ETH gas price is {mainnet_gas_price} gwei.')
+        logging.info(f'ETH gas price is {mainnet_gas_price} gwei.')
         if mainnet_gas_price > MAX_GWEI:
             print(f'ETH gas price is too high.\nPending for {retry_pending_time}s ...')
             time.sleep(retry_pending_time)
@@ -89,8 +90,7 @@ def execute_task(acc_label, operator_name, swap_token, swap_mode, start_pengding
     assert swap_token in SWAP_TRADABLE_TOKENS[operator_name]
     assert acc_label in account_list
 
-    current_time = utils.get_readable_time()
-    print(f'[{current_time}] Execute swap for account **< {acc_label} >**')
+    logging.info(f'Execute swap for account **< {acc_label} >**')
     print(f'Pending for {start_pengding_time}s ...')
     print(f'Estimated execution time: {utils.get_readable_time(time.time() + start_pengding_time)}')
 
@@ -137,30 +137,33 @@ if __name__ == '__main__':
 
     operator_list = list(operator_set.keys())
 
-    total_time = 14400
+    total_time = 21000
     task_accounts = [
-        'espoo3',
-        'espoo7',
-        'sgl10',
-        'sgl15',
-        'sgl18',
-        'sgl24',
-        'sgl27',
-        'sgl33',
-        'sgl37',
-        'sgl39',
-        'sgl41',
-        'sgl45',
-        'sgl47',
-        'sgl49',
-        'sgl52',
-        'sgl55',
-        'sgl59',
-        'sgl65',
-        'sgl69',
-        'sgl83',
-        'sgl103',
-        'sgl125',
+        'espoo2',
+        'espoo6',
+        'espoo8',
+        'sgl3',
+        'sgl6',
+        'sgl9',
+        'sgl12',
+        'sgl20',
+        'sgl23',
+        'sgl29',
+        'sgl31',
+        'sgl35',
+        'sgl40',
+        'sgl42',
+        'sgl50',
+        'sgl53',
+        'sgl56',
+        'sgl67',
+        'sgl72',
+        'sgl76',
+        'sgl86',
+        'sgl95',
+        'sgl98',
+        'sgl121',
+        'sgl145',
     ]
     account_list1 = task_accounts[::2]
     account_list2 = task_accounts[1::2]
@@ -213,5 +216,4 @@ if __name__ == '__main__':
         print(f'\nTask {i + 1}/{task_num}:')
         execute_task(**task_args[i])
 
-    current_time = utils.get_readable_time()
-    print(f"[{current_time}] All tasks finished!")
+    logging.info('All tasks finished!')

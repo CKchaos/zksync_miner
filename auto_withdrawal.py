@@ -9,6 +9,7 @@ import okx.Funding as Funding
 import utils
 from config import * 
 from decrypt import get_decrypted_acc_info
+from logger import logging
 
 def get_account_list(start_idx):
     account_info = get_decrypted_acc_info(ACCOUNT_INFO_FILE_PATH)
@@ -69,7 +70,7 @@ def get_empty_accounts(account_list):
         balance = w3.eth.get_balance(acc['address'])
         if balance == 0:
             empty_accounts.append(acc)
-        
+
     return empty_accounts
 
 def get_task_accounts(empty_accounts, epoch_task_num):
@@ -116,8 +117,7 @@ def withdrawal(funding_api, to_addr, amount):
                 chain='ETH-zkSync Era'
             )
 
-            current_time = utils.get_readable_time()
-            print(f'\n[{current_time}] Withdrawal request sent.\n')
+            logging.info('Withdrawal request sent.')
             print("result:", rst)
 
             return
@@ -143,18 +143,22 @@ if __name__ == '__main__':
 
     while(True):
         pending_time_list = get_pending_time_list(epoch_time, epoch_task_num)
+
+        logging.info("Getting empty accounts ...")
         empty_accounts = get_empty_accounts(account_list)
+        
+        empty_num = len(empty_accounts)
+        logging.info(f"empty accounts: {empty_num}")
 
         if len(empty_accounts) < epoch_task_num:
-            print("\nDeposit task finished!")
+            logging.info("Deposit task finished!")
             exit()
 
         task_accounts = get_task_accounts(empty_accounts, epoch_task_num)
 
         for i, acc in enumerate(task_accounts):
-            current_time = utils.get_readable_time()
             label = acc['label']
-            print(f'\n[{current_time}] Execute deposit for account **< {label} >**')
+            logging.info(f'Execute deposit for account **< {label} >**')
 
             amount = get_amount()
 

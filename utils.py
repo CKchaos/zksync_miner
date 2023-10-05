@@ -3,11 +3,13 @@ import json
 import time
 from config import *
 import requests
+from datetime import datetime
+from pytz import timezone
 
 def get_readable_time(t=None):
     if t == None:
         t = time.time()
-    time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(t))
+    time_str = datetime.fromtimestamp(t, tz=timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S")
 
     return time_str
 

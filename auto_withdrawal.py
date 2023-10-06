@@ -38,7 +38,7 @@ def get_funding_api():
 
     flag = "0"
 
-    funding_api = Funding.FundingAPI(api_key, secret_key, passphrase, False, flag)
+    funding_api = Funding.FundingAPI(api_key, secret_key, passphrase, False, flag, debug = False)
 
     return funding_api
 
@@ -118,7 +118,6 @@ def withdrawal(funding_api, to_addr, amount):
             )
 
             logging.info('Withdrawal request sent.')
-            print("result:", rst)
 
             return
 
@@ -129,8 +128,6 @@ def withdrawal(funding_api, to_addr, amount):
             time.sleep(5)
             attempt += 1
     
-
-
 if __name__ == '__main__':
 
     epoch_time = 76000
@@ -167,12 +164,3 @@ if __name__ == '__main__':
             print(f'\nPending for {pending_time_list[i]}s ...')
             print(f'Estimated time for next execution: {utils.get_readable_time(time.time() + pending_time_list[i])}')
             time.sleep(pending_time_list[i])
-
-
-
-
-
-    
-
-    
-

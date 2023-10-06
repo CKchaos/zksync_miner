@@ -3,6 +3,7 @@ import time
 import random
 from web3 import Web3
 import numpy as np
+from datetime import datetime
 
 import okx.Funding as Funding
 
@@ -139,7 +140,9 @@ if __name__ == '__main__':
     funding_api = get_funding_api()
 
     while(True):
+        logging.info("Generating pending time list ...")
         pending_time_list = get_pending_time_list(epoch_time, epoch_task_num)
+        print("pending_time_list:", pending_time_list)
 
         logging.info("Getting empty accounts ...")
         empty_accounts = get_empty_accounts(account_list)
@@ -161,6 +164,6 @@ if __name__ == '__main__':
 
             withdrawal(funding_api, acc['address'], amount)
 
-            print(f'\nPending for {pending_time_list[i]}s ...')
+            print('\nPending for %s ...' % datetime.utcfromtimestamp(int(pending_time_list[i])).strftime("%Hh %Mm %Ss"))
             print(f'Estimated time for next execution: {utils.get_readable_time(time.time() + pending_time_list[i])}')
             time.sleep(pending_time_list[i])

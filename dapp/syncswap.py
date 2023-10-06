@@ -52,6 +52,8 @@ class SyncSwap(SwapOperator):
         return min_amount_out
 
     def swap(self, from_token, amount, nonce=None):
+        self.check_eth_gas()
+
         min_amount_out = self.get_min_amount_out(ZKSYNC_TOKENS[from_token], amount)
 
         if from_token != 'ETH' and min_amount_out < ETH_OUT_MIN_LIMIT:
@@ -74,7 +76,7 @@ class SyncSwap(SwapOperator):
         tx_data = self.get_init_tx_data()
         tx_data.update({
             'value': amount if from_token == 'ETH' else 0,
-            'gas': self.gas_for_swap,
+            'gas': self.get_gas_for_swap(),
             'nonce': nonce
         })
 

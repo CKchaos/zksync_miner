@@ -43,6 +43,11 @@ class SwapOperator(BaseOperator):
 
         return balance
 
+    def get_gas_for_swap(self):
+        gas = int(self.gas_for_swap * self.gas_factor)
+
+        return gas
+
     def swap_to_token(self, amount):
         pass
 

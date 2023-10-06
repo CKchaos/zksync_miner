@@ -24,6 +24,8 @@ class BaseOperator():
         self.gas_for_approve = utils.usd_to_zk_gas(gas_for_approve, self.eth_market_price)
         self.gas_for_execute = utils.usd_to_zk_gas(gas_for_execute, self.eth_market_price)
 
+        self.gas_factor = 1
+
     def get_init_tx_data(self):
         init_tx_data = {
             'from': self.acc.address,
@@ -40,6 +42,19 @@ class BaseOperator():
 
         return contract
 
+    def check_eth_gas(self):
+        print("Checking ETH mainnet gas price ...")
+        while(True):
+            mainnet_gas_price = utils.get_eth_mainnet_gas_price()
+            print(f'ETH gas price is {mainnet_gas_price} gwei.')
+            if mainnet_gas_price > MAX_GWEI:
+                print(f'ETH gas price is too high.\nPending for {GAS_RETRY_PENDING_TIME}s ...')
+                time.sleep(GAS_RETRY_PENDING_TIME)
+            else:
+                self.gas_factor = 1 if mainnet_gas_price < TARGET_GAS_PRICE else mainnet_gas_price / TARGET_GAS_PRICE * 0.5 + 0.5
+
+                return
+
     def check_token_approval(self, address_to_approve, ammount_in_wei, token='USDC'):
         print("Checking allowance ...")
 
@@ -53,12 +68,14 @@ class BaseOperator():
 
         if allowance_in_wei < ammount_in_wei:
             print("Perform allowance first ...")
+            self.check_eth_gas()
+
             nonce = self.w3.eth.get_transaction_count(self.acc.address)
 
             tx_data = self.get_init_tx_data()
             tx_data.update({
                 'value': 0,
-                'gas': self.gas_for_approve,
+                'gas': int(self.gas_for_approve * self.gas_factor),
                 'nonce': nonce
             })
 

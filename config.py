@@ -3,9 +3,11 @@ ETH_MAINNET_RPC = 'https://cloudflare-eth.com'
 ERC20_ABI = 'abi/erc20abi.json'
 MAX_GWEI = 25
 TARGET_GAS_PRICE = 12.5
+GAS_RETRY_PENDING_TIME = 180
 ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 ETH_OUT_MIN_LIMIT = 1800000000000000
 ETH_MINIMUM_BALANCE = 1000000000000000
+ETH_SWAP_MINIMUM_IN_ETHER = 0.0025
 USDC_SWAP_MIN_LIMIT = 2500000
 
 #data
@@ -190,7 +192,15 @@ SWAP_TRADABLE_TOKENS = {
     'Mute': ZK_MUTE_TOKENS,
     'SpaceFi': ZK_SPACEFI_TOKENS,
     'zkSwap': ZK_ZKSWAP_TOKENS,
-    'Velocore': ZK_VELOCORE_TOKENS,
-    'Maverick': ZK_MAVERICK_TOKENS,
+    #'Velocore': ZK_VELOCORE_TOKENS,
+    #'Maverick': ZK_MAVERICK_TOKENS,
 }
 
+SWAP_TOKEN_PATHS = {}
+for op, tokens in SWAP_TRADABLE_TOKENS.items():
+    for token in tokens:
+        if token in SWAP_TOKEN_PATHS:
+            SWAP_TOKEN_PATHS[token].append(op)
+        else:
+            SWAP_TOKEN_PATHS[token] = [op]
+            

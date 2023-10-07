@@ -61,11 +61,11 @@ class TaskDeployer():
         self.side_operator_list = list(self.side_operator_set.keys())
 
         self.swap_prob = 1 #0.85
-        self.usdc_prob = 0.75
+        self.usdc_prob = 0.6
         self.sample_op_prob = 0.5
 
         self.epoch_time = 21600
-        self.epoch_percentage = 0.15
+        self.epoch_percentage = 0.2
 
     def get_amount(self, max_amount):
         if max_amount < ETH_SWAP_MINIMUM_IN_ETHER * 1e18:
@@ -107,9 +107,9 @@ class TaskDeployer():
         nonces = np.array(nonces)
         acc_num = len(candidates)
 
-        prob = np.ones(acc_num) * 3.
-        prob[nonces < 20] = 1.25
-        prob[nonces > 80] = 0.8
+        prob = np.ones(acc_num) * 2.5
+        prob[nonces < 20] = 1.5
+        prob[nonces > 80] = 1
         prob = prob / np.sum(prob)
 
         task_accounts = np.random.choice(candidates, size=sample_num, replace=False, p=prob)
@@ -221,16 +221,14 @@ class TaskDeployer():
 
         if swap_mode[1]:
             if swap_mode[0]:
+                print('Sampling an operator ...')
+                op_name = random.choice(SWAP_TOKEN_PATHS[swap_token])
+                if op_name != operator_name:
+                    swap_operator = self.swap_operator_set[op_name](self.account_dict[acc_label], swap_token, self.gas_for_approve, self.gas_for_swap, self.slippage)
+                
                 wash_pending_time = self.get_wash_pending_time()
                 print(f'Pending for {wash_pending_time}s ...')
                 time.sleep(wash_pending_time)
-                
-                rand = random.random()
-                if rand < self.sample_op_prob:
-                    print('Sampling an operator ...')
-                    op_name = random.choice(SWAP_TOKEN_PATHS[swap_token])
-                    if op_name != operator_name:
-                        swap_operator = self.swap_operator_set[op_name](self.account_dict[acc_label], swap_token, self.gas_for_approve, self.gas_for_swap, self.slippage)
 
             swap_amount = swap_operator.get_token_balance()
             swap_status = swap_operator.swap_to_eth(swap_amount)

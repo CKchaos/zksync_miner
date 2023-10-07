@@ -43,10 +43,10 @@ class BaseOperator():
         return contract
 
     def check_eth_gas(self):
-        print("Checking ETH mainnet gas price ...")
+        #print("Checking ETH mainnet gas price ...")
         while(True):
             mainnet_gas_price = utils.get_eth_mainnet_gas_price()
-            print(f'ETH gas price is {mainnet_gas_price} gwei.')
+            #print(f'ETH gas price is {mainnet_gas_price} gwei.')
             if mainnet_gas_price > MAX_GWEI:
                 print(f'ETH gas price is too high.\nPending for {GAS_RETRY_PENDING_TIME}s ...')
                 time.sleep(GAS_RETRY_PENDING_TIME)

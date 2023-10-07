@@ -221,8 +221,8 @@ class TaskDeployer():
 
         if swap_mode[1]:
             if swap_mode[0]:
-                print('Sampling an operator ...')
                 op_name = random.choice(SWAP_TOKEN_PATHS[swap_token])
+                print('Sampled an operator:', op_name)
                 if op_name != operator_name:
                     swap_operator = self.swap_operator_set[op_name](self.account_dict[acc_label], swap_token, self.gas_for_approve, self.gas_for_swap, self.slippage)
                 

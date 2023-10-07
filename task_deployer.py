@@ -65,7 +65,7 @@ class TaskDeployer():
         self.sample_op_prob = 0.5
 
         self.epoch_time = 21600
-        self.epoch_percentage = 0.2
+        self.epoch_percentage = 0.24
 
     def get_amount(self, max_amount):
         if max_amount < ETH_SWAP_MINIMUM_IN_ETHER * 1e18:
@@ -133,8 +133,6 @@ class TaskDeployer():
         randomlist[min_idx] = randomlist[min_idx] * 0.8
         
         randomlist = np.array(randomlist * unit_time, dtype='int64')
-
-        randomlist[0] = 1 #################################################################
 
         return list(randomlist)
 

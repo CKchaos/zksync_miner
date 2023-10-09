@@ -42,6 +42,11 @@ class BaseOperator():
 
         return contract
 
+    def get_gas_for_execute(self):
+        gas = int(self.gas_for_execute * self.gas_factor)
+
+        return gas
+
     def check_eth_gas(self):
         #print("Checking ETH mainnet gas price ...")
         while(True):

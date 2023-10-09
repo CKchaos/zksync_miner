@@ -155,6 +155,9 @@ if __name__ == '__main__':
             exit()
 
         task_accounts = get_task_accounts(empty_accounts, epoch_task_num)
+        acc_list = [acc['label'] for acc in task_accounts]
+        print("task account list:", acc_list)
+
 
         for i, acc in enumerate(task_accounts):
             label = acc['label']

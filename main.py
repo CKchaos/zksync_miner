@@ -10,6 +10,7 @@ from dapp.pancakeswap import PancakeSwap
 from dapp.mute import Mute
 from dapp.spacefi import SpaceFi
 from dapp.zkswap import zkSwap
+from dapp.maverick import Maverick
 from decrypt import get_decrypted_acc_info
 
 account_info = get_decrypted_acc_info(ACCOUNT_INFO_FILE_PATH)
@@ -28,6 +29,7 @@ operator_set = {
     'Mute': Mute,
     'SpaceFi': SpaceFi,
     'zkSwap': zkSwap,
+    'Maverick': Maverick,
 }
 
 gas_for_approve = 0.24
@@ -96,12 +98,7 @@ def execute_task(acc_label, operator_name, swap_token, swap_mode, start_pengding
 
     time.sleep(start_pengding_time)
 
-    # TODO: check gas before every tx
-    gas_price = check_eth_gas()
-
-    f = get_gas_factor(gas_price)
-
-    swap_operator = operator_set[operator_name](account_dict[acc_label], swap_token, gas_for_approve * f, gas_for_swap * f, slippage)
+    swap_operator = operator_set[operator_name](account_dict[acc_label], swap_token, gas_for_approve, gas_for_swap, slippage)
 
     if swap_token == 'USDC':
         balance = swap_operator.get_token_balance()
@@ -137,33 +134,10 @@ if __name__ == '__main__':
 
     operator_list = list(operator_set.keys())
 
-    total_time = 21000
+    total_time = 250
     task_accounts = [
-        'espoo2',
-        'espoo6',
-        'espoo8',
-        'sgl3',
-        'sgl6',
-        'sgl9',
-        'sgl12',
-        'sgl20',
-        'sgl23',
-        'sgl29',
-        'sgl31',
-        'sgl35',
-        'sgl40',
-        'sgl42',
-        'sgl50',
-        'sgl53',
-        'sgl56',
-        'sgl67',
         'sgl72',
-        'sgl76',
-        'sgl86',
-        'sgl95',
-        'sgl98',
-        'sgl121',
-        'sgl145',
+        'sgl149',
     ]
     account_list1 = task_accounts[::2]
     account_list2 = task_accounts[1::2]

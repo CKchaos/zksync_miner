@@ -11,6 +11,7 @@ from decrypt import get_decrypted_acc_info
 
 from dapp.archiswap import ArchiSwap
 from dapp.eralend import EraLend
+from dapp.maverick import Maverick
 from dapp.mute import Mute
 from dapp.pancakeswap import PancakeSwap
 from dapp.reactor import Reactor
@@ -23,6 +24,7 @@ from dapp.zns import ZNS
 
 def get_operator_sets():
     swap_operator_set = {
+        'Maverick': Maverick,
         'Mute': Mute,
         'PancakeSwap': PancakeSwap,
         'SpaceFi': SpaceFi,

@@ -7,6 +7,7 @@ from config import *
 import utils
 from decrypt import get_decrypted_acc_info
 from dapp.pancakeswap import PancakeSwap
+from dapp.maverick import Maverick
 
 account_info = get_decrypted_acc_info(ACCOUNT_INFO_FILE_PATH)
 account_list = [a['label'] for a in account_info]
@@ -23,6 +24,7 @@ slippage=0.5
 
 operator_set = {
     'PancakeSwap': PancakeSwap,
+    'Maverick': Maverick,
 }
 
 def get_amount(max_amount):
@@ -67,13 +69,13 @@ def execute_task(acc_label, operator_name, swap_token, start_pengding_time):
 if __name__ == '__main__':
     operator_list = list(operator_set.keys())
 
-    task_account = 'sgl57'
+    task_account = 'sgl59'
     wash_times = 5
 
-    max_gap_pending_time = 100
+    max_gap_pending_time = 50
     
     for i in range(wash_times):
-        print(f'\nTask: {i}/{wash_times}')
+        print(f'\nTask: {i + 1}/{wash_times}')
         operator_name = random.choice(operator_list)
 
         args = {

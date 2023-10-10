@@ -182,6 +182,17 @@ ZK_XYSWAP_CONTRACTS = {
 
 ZK_XYSWAP_TOKENS = ['USDC', 'USDT', 'BUSD']
 
+#WooFi
+WOOFI_ROUTER_ABI = 'abi/woofi/router.json'
+
+ZK_WOOFI_CONTRACTS = {
+    "router": "0xfd505702b37Ae9b626952Eb2DD736d9045876417"
+}
+
+WOO_E_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+
+ZK_WOOFI_TOKENS = ['USDC']
+
 #Eralend
 ERALEND_ABI = 'abi/eralend/abi.json'
 
@@ -236,6 +247,7 @@ SWAP_TRADABLE_TOKENS = {
     'Maverick': ZK_MAVERICK_TOKENS,
     'Odos': ZK_ODOS_TOKENS,
     'XYSwap': ZK_XYSWAP_TOKENS,
+    'WooFi': ZK_WOOFI_TOKENS,
 }
 
 SWAP_TOKEN_PATHS = {}

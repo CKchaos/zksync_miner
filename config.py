@@ -166,6 +166,11 @@ ZK_MAVERICK_TOKEN_FACTOR = {
     'rETH': 0.998
 }
 
+#Odos
+ZK_ODOS_CONTRACTS = {
+    "router": "0x4bBa932E9792A2b917D47830C93a9BC79320E4f7",
+}
+
 #Eralend
 ERALEND_ABI = 'abi/eralend/abi.json'
 

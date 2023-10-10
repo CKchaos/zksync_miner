@@ -173,6 +173,15 @@ ZK_ODOS_CONTRACTS = {
 
 ZK_ODOS_TOKENS = ['USDC']
 
+#XYSwap
+XY_E_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+
+ZK_XYSWAP_CONTRACTS = {
+    "router": "0x30E63157bD0bA74C814B786F6eA2ed9549507b46",
+}
+
+ZK_XYSWAP_TOKENS = ['USDC']
+
 #Eralend
 ERALEND_ABI = 'abi/eralend/abi.json'
 
@@ -226,6 +235,7 @@ SWAP_TRADABLE_TOKENS = {
     'iZumi': ZK_IZUMI_TOKENS,
     'Maverick': ZK_MAVERICK_TOKENS,
     'Odos': ZK_ODOS_TOKENS,
+    'XYSwap': ZK_XYSWAP_TOKENS,
 }
 
 SWAP_TOKEN_PATHS = {}

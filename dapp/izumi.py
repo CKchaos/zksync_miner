@@ -1,5 +1,6 @@
 import time
 import json
+import random
 from web3 import Web3
 from eth_abi import encode
 
@@ -46,7 +47,9 @@ class iZumi(SwapOperator):
         if nonce == None:
             nonce = self.w3.eth.get_transaction_count(self.acc.address)
 
-        path = ZKSYNC_TOKENS[from_token] + '0007D0' + ZKSYNC_TOKENS[to_token][2:]
+        fee = random.choice(['000190', '0007D0'])
+
+        path = ZKSYNC_TOKENS[from_token] + fee + ZKSYNC_TOKENS[to_token][2:]
 
         deadline = int(time.time() + 600)
         input_data = self.router_contract.encodeABI(

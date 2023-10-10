@@ -16,7 +16,7 @@ class XYSwap(SwapOperator):
             acc=acc,
             swap_token=swap_token,
             gas_for_approve=gas_for_approve,
-            gas_for_swap=gas_for_swap,
+            gas_for_swap=gas_for_swap * 1.5,
             slippage=slippage
         )
 

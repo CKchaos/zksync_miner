@@ -180,7 +180,7 @@ ZK_XYSWAP_CONTRACTS = {
     "router": "0x30E63157bD0bA74C814B786F6eA2ed9549507b46",
 }
 
-ZK_XYSWAP_TOKENS = ['USDC']
+ZK_XYSWAP_TOKENS = ['USDC', 'USDT', 'BUSD']
 
 #Eralend
 ERALEND_ABI = 'abi/eralend/abi.json'

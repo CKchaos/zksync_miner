@@ -11,6 +11,7 @@ from dapp.mute import Mute
 from dapp.spacefi import SpaceFi
 from dapp.zkswap import zkSwap
 from dapp.maverick import Maverick
+from dapp.izumi import iZumi
 from decrypt import get_decrypted_acc_info
 
 account_info = get_decrypted_acc_info(ACCOUNT_INFO_FILE_PATH)
@@ -30,6 +31,7 @@ operator_set = {
     'SpaceFi': SpaceFi,
     'zkSwap': zkSwap,
     'Maverick': Maverick,
+    'iZumi': iZumi,
 }
 
 gas_for_approve = 0.24

@@ -51,7 +51,7 @@ def get_operator_sets():
 
 class TaskDeployer():
 
-    def __init__(self):
+    def __init__(self, epoch_time, epoch_percentage):
         self.w3 = Web3(Web3.HTTPProvider(ZKSYNC_ERA_RPC))
 
         account_info = get_decrypted_acc_info(ACCOUNT_INFO_FILE_PATH)
@@ -72,8 +72,8 @@ class TaskDeployer():
         self.usdc_prob = 0.6
         self.sample_op_prob = 0.5
 
-        self.epoch_time = 21600
-        self.epoch_percentage = 0.24
+        self.epoch_time = epoch_time
+        self.epoch_percentage = epoch_percentage
 
     def get_amount(self, max_amount):
         if max_amount < ETH_SWAP_MINIMUM_IN_ETHER * 1e18:

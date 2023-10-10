@@ -122,14 +122,14 @@ ZK_ZKSWAP_CONTRACTS = {
 
 ZK_ZKSWAP_TOKENS = ['BUSD', 'USDC', 'USDT', 'WBTC', 'ZF']
 
-#Velocore
-VELOCORE_ROUTER_ABI = 'abi/velocore/router.json'
+#iZumi
+IZUMI_ROUTER_ABI = 'abi/izumi/router.json'
 
-ZK_VELOCORE_CONTRACTS = {
-    "router": "0xf5E67261CB357eDb6C7719fEFAFaaB280cB5E2A6"
+ZK_IZUMI_CONTRACTS = {
+    "router": "0x943ac2310D9BC703d6AB5e5e76876e212100f894"
 }
 
-ZK_VELOCORE_TOKENS = ['USDC']
+ZK_IZUMI_TOKENS = ['USDC']
 
 #Maverick
 MAVERICK_POSITION_ABI = 'abi/maverick/position.json'
@@ -216,7 +216,7 @@ SWAP_TRADABLE_TOKENS = {
     'Mute': ZK_MUTE_TOKENS,
     'SpaceFi': ZK_SPACEFI_TOKENS,
     'zkSwap': ZK_ZKSWAP_TOKENS,
-    #'Velocore': ZK_VELOCORE_TOKENS,
+    #'iZumi': ZK_IZUMI_TOKENS,
     'Maverick': ZK_MAVERICK_TOKENS,
 }
 

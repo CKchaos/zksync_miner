@@ -14,6 +14,7 @@ from dapp.eralend import EraLend
 from dapp.izumi import iZumi
 from dapp.maverick import Maverick
 from dapp.mute import Mute
+from dapp.odos import Odos
 from dapp.pancakeswap import PancakeSwap
 from dapp.reactor import Reactor
 from dapp.spacefi import SpaceFi
@@ -28,6 +29,7 @@ def get_operator_sets():
         'iZumi': iZumi,
         'Maverick': Maverick,
         'Mute': Mute,
+        'Odos': Odos,
         'PancakeSwap': PancakeSwap,
         'SpaceFi': SpaceFi,
         'SyncSwap': SyncSwap,

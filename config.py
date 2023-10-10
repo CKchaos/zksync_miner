@@ -171,6 +171,8 @@ ZK_ODOS_CONTRACTS = {
     "router": "0x4bBa932E9792A2b917D47830C93a9BC79320E4f7",
 }
 
+ZK_ODOS_TOKENS = ['USDC']
+
 #Eralend
 ERALEND_ABI = 'abi/eralend/abi.json'
 
@@ -223,6 +225,7 @@ SWAP_TRADABLE_TOKENS = {
     'zkSwap': ZK_ZKSWAP_TOKENS,
     'iZumi': ZK_IZUMI_TOKENS,
     'Maverick': ZK_MAVERICK_TOKENS,
+    'Odos': ZK_ODOS_TOKENS,
 }
 
 SWAP_TOKEN_PATHS = {}

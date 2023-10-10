@@ -21,6 +21,7 @@ from dapp.spacefi import SpaceFi
 from dapp.syncswap import SyncSwap
 from dapp.tevaera import Tevaera
 from dapp.weth import WETH
+from dapp.woofi import WooFi
 from dapp.xyswap import XYSwap
 from dapp.zkswap import zkSwap
 from dapp.zns import ZNS
@@ -34,6 +35,7 @@ def get_operator_sets():
         'PancakeSwap': PancakeSwap,
         'SpaceFi': SpaceFi,
         'SyncSwap': SyncSwap,
+        'WooFi': WooFi,
         'XYSwap': XYSwap,
         'zkSwap': zkSwap,
     }

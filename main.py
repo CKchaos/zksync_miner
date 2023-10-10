@@ -19,7 +19,6 @@ account_list = [a['label'] for a in account_info]
 
 w3 = Web3(Web3.HTTPProvider(ZKSYNC_ERA_RPC))
 
-# TODO: add blacklist
 account_dict = {}
 for acc_info in account_info:
     account_dict[acc_info['label']] = w3.eth.account.from_key(acc_info['private_key'])
@@ -40,7 +39,7 @@ slippage=0.5
 
 def get_amount(max_amount):
     if max_amount < 0.0025 * 1e18:
-        raise Exception(utils.get_readable_time(), 'ETH balance is not enough for swapping.')
+        return 0
 
     swap_amount = 0.0025 + 0.005 * random.random()
 
@@ -73,22 +72,6 @@ def print_tx_staus_info(swap_status, swap_operator_name, swap_amount, from_token
     
     logging.info(s)
 
-def get_gas_factor(gas_price):
-    gas_factor = 1 if gas_price < TARGET_GAS_PRICE else gas_price / TARGET_GAS_PRICE * 0.5 + 0.5
-
-    return gas_factor
-
-def check_eth_gas():
-    retry_pending_time = 300
-    while(True):
-        mainnet_gas_price = utils.get_eth_mainnet_gas_price()
-        logging.info(f'ETH gas price is {mainnet_gas_price} gwei.')
-        if mainnet_gas_price > MAX_GWEI:
-            print(f'ETH gas price is too high.\nPending for {retry_pending_time}s ...')
-            time.sleep(retry_pending_time)
-        else:
-            return mainnet_gas_price
-
 def execute_task(acc_label, operator_name, swap_token, swap_mode, start_pengding_time):
     assert operator_name in SWAP_TRADABLE_TOKENS
     assert swap_token in SWAP_TRADABLE_TOKENS[operator_name]
@@ -105,17 +88,18 @@ def execute_task(acc_label, operator_name, swap_token, swap_mode, start_pengding
     if swap_token == 'USDC':
         balance = swap_operator.get_token_balance()
         if balance > USDC_SWAP_MIN_LIMIT:
-            if random.random() > 0.5:
-                swap_mode = (0, 1)
-                print('Sell USDC this time ...')
+            swap_mode = (0, 1)
+            print('Sell USDC this time ...')
         elif swap_mode[0] == 0:
             swap_mode = (1, 1)
             print('Buy USDC first ...')
-        
 
     if swap_mode[0]:
         eth_balance = swap_operator.get_eth_balance()
         swap_amount = get_amount(eth_balance - ETH_MINIMUM_BALANCE)
+        if swap_amount == 0:
+            logging.info('ETH balance is not enough for swapping.')
+            return
         swap_status = swap_operator.swap_to_token(swap_amount)
         print_tx_staus_info(swap_status, swap_operator.name, swap_amount / 1e18, 'ETH', swap_operator.swap_token)
         if not swap_status:
@@ -136,10 +120,10 @@ if __name__ == '__main__':
 
     operator_list = list(operator_set.keys())
 
-    total_time = 250
+    total_time = 300
     task_accounts = [
-        'sgl72',
-        'sgl149',
+        'sgl83',
+        'sgl94',
     ]
     account_list1 = task_accounts[::2]
     account_list2 = task_accounts[1::2]

@@ -2,6 +2,7 @@ import time
 import json
 import random
 from web3 import Web3
+from web3.exceptions import TransactionNotFound
 from eth_abi import encode
 
 from config import * 
@@ -103,7 +104,27 @@ class BaseOperator():
         signed_tx = self.w3.eth.account.sign_transaction(builded_tx, self.acc.key)
         tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction).hex()
 
-        time.sleep(8)
+        time.sleep(3)
 
-        tx_status = utils.check_tx_status(tx_hash)
+        tx_status = self.check_tx_status(tx_hash)
+
         return tx_status
+
+    def check_tx_status(self, tx_hash):
+        start_time = time.time()
+        while True:
+            try:
+                receipt = self.w3.eth.get_transaction_receipt(tx_hash)
+                status = receipt['status']
+
+                if status is None:
+                    time.sleep(0.5)
+                elif status == 1:
+                    return True
+                else:
+                    return False
+            except TransactionNotFound:
+                if time.time() - start_time > MAX_TX_CHECKING_WAIT_TIME:
+                    print(f'Failed tx: {tx_hash}')
+                    return False
+                time.sleep(1)

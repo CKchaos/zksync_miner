@@ -40,23 +40,6 @@ def load_abi(abi_file_path):
         abi = json.load(f)
         return abi
 
-def check_tx_status(tx_hash, rpc="https://mainnet.era.zksync.io"):
-    attempt = 0
-    while attempt < 3:
-        try:
-            w3 = Web3(Web3.HTTPProvider(rpc))
-            tx = w3.eth.get_transaction_receipt(tx_hash)
-            status = tx['status']
-            if status == 1:
-                return True
-            else:
-                return False
-        except:
-            time.sleep(3)
-            attempt += 1
-    
-    raise Exception(get_readable_time(), 'Checking transaction status error.')
-
 def get_eth_mainnet_gas_price():
     attempt = 0
 

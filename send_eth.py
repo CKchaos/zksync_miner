@@ -37,11 +37,12 @@ class ETHSender(BaseOperator):
 if __name__ == '__main__':
 
     gas_for_execute=0.18
-    
-    task_account = 'sgl59'
-    amount_in_ether = 0.1185
 
-    pending_time = 1
+    params = utils.load_params('./params/send_eth.json')
+
+    task_account = params['task_account']
+    amount_in_ether = params['amount_in_ether']
+    pending_time = params['pending_time']
 
     logging.info(f'Prepare to send {amount_in_ether} ETH to OKX for account **< {task_account} >**')
     print(f"Pending for {pending_time}s ...")

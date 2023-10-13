@@ -40,6 +40,11 @@ def load_abi(abi_file_path):
         abi = json.load(f)
         return abi
 
+def load_params(params_file_path):
+    with open(params_file_path) as f:
+        params = json.load(f)
+        return params
+
 def get_eth_mainnet_gas_price():
     attempt = 0
 

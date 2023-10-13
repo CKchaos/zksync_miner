@@ -53,7 +53,7 @@ def get_operator_sets():
 
 class TaskDeployer():
 
-    def __init__(self, epoch_time, epoch_percentage):
+    def __init__(self, epoch_time, epoch_percentage, swap_prob, usdc_prob):
         self.w3 = Web3(Web3.HTTPProvider(ZKSYNC_ERA_RPC))
 
         account_info = get_decrypted_acc_info(ACCOUNT_INFO_FILE_PATH)
@@ -70,8 +70,8 @@ class TaskDeployer():
         self.swap_operator_list = list(self.swap_operator_set.keys())
         self.side_operator_list = list(self.side_operator_set.keys())
 
-        self.swap_prob = 1 #0.85
-        self.usdc_prob = 0.6
+        self.swap_prob = swap_prob
+        self.usdc_prob = usdc_prob
 
         with open(CHANGE_OP_PROB_PATH, 'r') as f:
             self.change_op_probs = json.load(f)

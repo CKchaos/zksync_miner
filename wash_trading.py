@@ -69,10 +69,11 @@ def execute_task(acc_label, operator_name, swap_token, start_pengding_time):
 if __name__ == '__main__':
     operator_list = list(operator_set.keys())
 
-    task_account = 'sgl59'
-    wash_times = 5
+    params = utils.load_params('./params/wash_trading.json')
 
-    max_gap_pending_time = 50
+    task_account = params['task_account']
+    wash_times = params['wash_times']
+    max_gap_pending_time = params['max_gap_pending_time']
     
     for i in range(wash_times):
         print(f'\nTask: {i + 1}/{wash_times}')

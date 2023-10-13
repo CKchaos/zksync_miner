@@ -135,7 +135,7 @@ class TaskDeployer():
     def get_non_active_times(self, candidates):
         non_active_times = np.zeros(len(candidates))
         for i, acc_label in enumerate(candidates):
-            non_active_time = get_non_active_time(account_dict[acc_label].address)
+            non_active_time = self.get_non_active_time(self.account_dict[acc_label].address)
             non_active_times[i] = non_active_time
 
         return non_active_times
@@ -272,7 +272,7 @@ class TaskDeployer():
 
             swap_amount = swap_operator.get_token_balance()
             swap_status = swap_operator.swap_to_eth(swap_amount)
-            self.print_tx_staus_info(swap_status, swap_operator.name, swap_amount / (10 ** swap_operator.token_decimals), swap_operator.swap_token, 'ETH')
+            self.print_tx_staus_info(acc_label, swap_status, swap_operator.name, swap_amount / (10 ** swap_operator.token_decimals), swap_operator.swap_token, 'ETH')
 
     def deploy_task(self, acc_label, operator_name, start_pengding_time):
         if operator_name in self.swap_operator_list:

@@ -171,14 +171,17 @@ class TaskDeployer():
 
         return wash_pending_time
     
-    def print_tx_staus_info(self, swap_status, swap_operator_name, swap_amount, from_token, to_token):
+    def print_tx_staus_info(self, acc_label, swap_status, swap_operator_name, swap_amount, from_token, to_token):
         s = "Swap %.8f %s for %s via %s " % (swap_amount, from_token, to_token, swap_operator_name)
         if swap_status:
             s = s + 'done!'
+            logging.info(s)
+
         else:
-            s = s + 'pending.'
-        
-        logging.info(s)
+            s = s + 'failed!'
+            logging.info(s)
+
+            logging.error(f'account **< {acc_label} >** may have got a failed transanction.')
 
     def deploy_side_task(self, acc_label, operator_name, start_pengding_time):
         pass
@@ -222,18 +225,19 @@ class TaskDeployer():
                 return
 
             swap_status = swap_operator.swap_to_token(swap_amount)
-            self.print_tx_staus_info(swap_status, swap_operator.name, swap_amount / 1e18, 'ETH', swap_operator.swap_token)
+            self.print_tx_staus_info(acc_label, swap_status, swap_operator.name, swap_amount / 1e18, 'ETH', swap_operator.swap_token)
             if not swap_status:
                 print("Buy swap failed, terminated!")
                 return
 
         if swap_mode[1]:
             if swap_mode[0]:
-                op_name = random.choice(SWAP_TOKEN_PATHS[swap_token])
-                print('Sampled an operator:', op_name)
-                if op_name != operator_name:
-                    swap_operator = self.swap_operator_set[op_name](self.account_dict[acc_label], swap_token, self.gas_for_approve, self.gas_for_swap, self.slippage)
-                
+                if random.random() < 0.6: 
+                    op_name = random.choice(SWAP_TOKEN_PATHS[swap_token])
+                    print('Sampled an operator:', op_name)
+                    if op_name != operator_name:
+                        swap_operator = self.swap_operator_set[op_name](self.account_dict[acc_label], swap_token, self.gas_for_approve, self.gas_for_swap, self.slippage)
+                    
                 wash_pending_time = self.get_wash_pending_time()
                 print(f'Pending for {wash_pending_time}s ...')
                 time.sleep(wash_pending_time)
@@ -280,4 +284,7 @@ class TaskDeployer():
             for i in range(task_num):
                 print()
                 logging.info(f'Task {i + 1}/{task_num}:')
-                self.deploy_task(**task_args[i])
+                try:
+                    self.deploy_task(**task_args[i])
+                except Exception as error:
+                    logging.error("An error occurred:", error)

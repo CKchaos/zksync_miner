@@ -69,7 +69,7 @@ def execute_task(acc_label, operator_name, swap_token, start_pengding_time):
 if __name__ == '__main__':
     operator_list = list(operator_set.keys())
 
-    params = utils.load_params('./params/wash_trading.json')
+    params = utils.load_json('./params/wash_trading.json')
 
     task_account = params['task_account']
     wash_times = params['wash_times']

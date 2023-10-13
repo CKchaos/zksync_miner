@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
     gas_for_execute=0.18
 
-    params = utils.load_params('./params/send_eth.json')
+    params = utils.load_json('./params/send_eth.json')
 
     task_account = params['task_account']
     amount_in_ether = params['amount_in_ether']

@@ -73,8 +73,7 @@ class TaskDeployer():
         self.swap_prob = swap_prob
         self.usdc_prob = usdc_prob
 
-        with open(CHANGE_OP_PROB_PATH, 'r') as f:
-            self.change_op_probs = json.load(f)
+        self.change_op_probs = utils.load_json(CHANGE_OP_PROB_PATH)
 
         self.epoch_time = epoch_time
         self.epoch_percentage = epoch_percentage

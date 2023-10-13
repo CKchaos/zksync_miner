@@ -2,7 +2,7 @@ from task_deployer import TaskDeployer
 import utils
 
 if __name__ == '__main__':
-    params = utils.load_params('./params/run_task_deployer.json')
+    params = utils.load_json('./params/run_task_deployer.json')
 
     epoch_time = params['epoch_time']
     epoch_percentage = params['epoch_percentage']

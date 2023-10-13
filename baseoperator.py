@@ -38,7 +38,7 @@ class BaseOperator():
         return init_tx_data
 
     def get_contract(self, contract_addr, abi_path):
-        abi = utils.load_abi(abi_path)
+        abi = utils.load_json(abi_path)
         contract = self.w3.eth.contract(contract_addr, abi=abi)
 
         return contract

@@ -35,15 +35,10 @@ def usd_to_zk_gas(usd, eth_market_price):
 
     return gas_unit
 
-def load_abi(abi_file_path):
-    with open(abi_file_path) as f:
-        abi = json.load(f)
-        return abi
-
-def load_params(params_file_path):
-    with open(params_file_path) as f:
-        params = json.load(f)
-        return params
+def load_json(json_file_path):
+    with open(json_file_path) as f:
+        json_data = json.load(f)
+        return json_data
 
 def get_eth_mainnet_gas_price():
     attempt = 0

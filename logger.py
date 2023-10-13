@@ -12,10 +12,3 @@ logging.basicConfig(
     level=logging.INFO,
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-
-logging.basicConfig(
-    filename='./error.log'
-    format="[%(asctime)s] %(message)s",
-    level=logging.ERROR,
-    datefmt="%Y-%m-%d %H:%M:%S",
-)

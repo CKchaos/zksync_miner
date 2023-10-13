@@ -72,7 +72,7 @@ class TaskDeployer():
 
         self.swap_prob = 1 #0.85
         self.usdc_prob = 0.6
-        self.sample_op_prob = 0.5
+        self.sample_op_prob = 0.6
 
         self.epoch_time = epoch_time
         self.epoch_percentage = epoch_percentage
@@ -112,14 +112,41 @@ class TaskDeployer():
             nonces.append(nonce)
 
         return nonces
+
+    def get_non_active_time(self, address):
+        try:
+            url = f"https://block-explorer-api.mainnet.zksync.io/transactions?address={address}&limit=1&page=1"
+
+            response = requests.get(url=url)
+            if response.status_code == 200:
+                data = response.json()
+                timestr = data['items'][0]['receivedAt']
+                last_active_time = datetime.strptime(timestr[:-5], "%Y-%m-%dT%H:%M:%S")
+                delta = datetime.utcnow() - last_active_time
+                non_active_time = int(delta.total_seconds())
+            else:
+                non_active_time = 1
+
+            return non_active_time
+        except:
+            return 0
+
+    def get_non_active_times(self, candidates):
+        non_active_times = np.zeros(len(candidates))
+        for i, acc_label in enumerate(candidates):
+            non_active_time = get_non_active_time(account_dict[acc_label].address)
+            non_active_times[i] = non_active_time
+
+        return non_active_times
     
-    def sample_task_accounts(self, candidates, nonces, sample_num):
+    def sample_task_accounts(self, candidates, nonces, non_active_times, sample_num):
         nonces = np.array(nonces)
         acc_num = len(candidates)
 
         prob = np.ones(acc_num) * 2.5
         prob[nonces < 20] = 1.5
         prob[nonces > 80] = 1
+        prob[non_active_times > 172800] = 6
         prob = prob / np.sum(prob)
 
         task_accounts = np.random.choice(candidates, size=sample_num, replace=False, p=prob)
@@ -232,7 +259,7 @@ class TaskDeployer():
 
         if swap_mode[1]:
             if swap_mode[0]:
-                if random.random() < 0.6: 
+                if random.random() < self.sample_op_prob: 
                     op_name = random.choice(SWAP_TOKEN_PATHS[swap_token])
                     print('Sampled an operator:', op_name)
                     if op_name != operator_name:
@@ -264,9 +291,12 @@ class TaskDeployer():
             nonces = self.get_candidate_nonces(task_candidates)
             logging.info('Number of all transactions: %d' % sum(nonces))
 
+            logging.info('Getting non-active times ...')
+            non_active_times = self.get_non_active_times(task_candidates)
+
             logging.info('Sampling task accounts and timetable ...')
             task_num = round(len(task_candidates) * self.epoch_percentage)
-            task_accounts = self.sample_task_accounts(task_candidates, nonces, task_num)
+            task_accounts = self.sample_task_accounts(task_candidates, nonces, non_active_times, task_num)
 
             pending_time_list = self.get_pending_time_list(self.epoch_time, task_num)
 

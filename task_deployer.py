@@ -72,7 +72,9 @@ class TaskDeployer():
 
         self.swap_prob = 1 #0.85
         self.usdc_prob = 0.6
-        self.sample_op_prob = 0.6
+
+        with open(CHANGE_OP_PROB_PATH, 'r') as f:
+            self.change_op_probs = json.load(f)
 
         self.epoch_time = epoch_time
         self.epoch_percentage = epoch_percentage
@@ -259,7 +261,7 @@ class TaskDeployer():
 
         if swap_mode[1]:
             if swap_mode[0]:
-                if random.random() < self.sample_op_prob: 
+                if random.random() < self.change_op_probs[acc_label]: 
                     op_name = random.choice(SWAP_TOKEN_PATHS[swap_token])
                     print('Sampled an operator:', op_name)
                     if op_name != operator_name:

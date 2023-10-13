@@ -14,6 +14,7 @@ MAX_TX_CHECKING_WAIT_TIME = 20
 #data
 ACCOUNT_INFO_FILE_PATH = './data/sgl_zksync_plan_x_py'
 PASSWORD_FILE_PATH = './password'
+CHANGE_OP_PROB_PATH = './data/change_op_probs.json'
 
 #zkSync
 ZKSYNC_ERA_RPC = 'https://mainnet.era.zksync.io'

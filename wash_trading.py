@@ -29,7 +29,15 @@ operator_set = {
 
 def get_amount(max_amount):
     p = 0.95 + random.random() * 0.05
+
     swap_amount = int(max_amount * p)
+
+    swap_amount = Web3.from_wei(swap_amount, 'ether')
+
+    digit_list = [2, 3, 4, 5, 6]
+    digit_num = random.choices(digit_list, weights=(4, 23, 34, 23, 16), k=1)[0]
+    swap_amount = round(swap_amount, digit_num)
+    swap_amount = Web3.to_wei(swap_amount, 'ether')
 
     return swap_amount
 

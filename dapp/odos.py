@@ -102,6 +102,8 @@ class Odos(SwapOperator):
         tx = transaction_data["transaction"]
         tx['value'] = int(tx['value'])
         tx['chainId'] = ZKSYNC_CHAIN_ID
+        if nonce is not None:
+            tx['nonce'] = nonce
 
         status = self.sign_and_send_tx(tx)
 

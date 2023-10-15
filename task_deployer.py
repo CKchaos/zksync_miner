@@ -206,7 +206,7 @@ class TaskDeployer():
         if seconds == 0:
             return 'NaN'
 
-        day = seconds // 86400
+        day = int(seconds // 86400)
         seconds = seconds % 86400
         ds = '' if day == 0 else f'{day}d '
         s = datetime.utcfromtimestamp(seconds).strftime("%Hh %Mm")
@@ -335,7 +335,7 @@ class TaskDeployer():
             for i in range(task_num):
                 acc_label = task_args[i]['acc_label']
                 last_tx_time = self.get_last_tx_time(non_active_times[task_account_indices[i]])
-                print(f"acc:{acc_label} last_tx:{last_tx_time} operator:{operator_list[i]} pending_time:{pending_time_list[i]}s")
+                print(f"acc:{acc_label:6.6}  last_tx:{last_tx_time:10.10}  operator:{operator_list[i]:11.11}  pending_time:{pending_time_list[i]}s")
 
             for i in range(task_num):
                 print()

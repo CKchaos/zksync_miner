@@ -140,7 +140,7 @@ class TaskDeployer():
 
         return non_active_times
     
-    def sample_task_accounts(self, candidates, nonces, non_active_times, sample_num):
+    def sample_task_account_idx(self, candidates, nonces, non_active_times, sample_num):
         nonces = np.array(nonces)
         acc_num = len(candidates)
 
@@ -151,9 +151,10 @@ class TaskDeployer():
             prob[non_active_times > 86400 * (1.5 + i)] = 5 + 5 ** i
         prob = prob / np.sum(prob)
 
-        task_accounts = np.random.choice(candidates, size=sample_num, replace=False, p=prob)
+        indices = list(range(acc_num))
+        task_accounts_idx = np.random.choice(indices, size=sample_num, replace=False, p=prob)
 
-        return list(task_accounts)
+        return list(task_accounts_idx)
 
     def get_pending_time_list(self, epoch_time, epoch_task_num):
         total_time = int(epoch_time * (0.9 + 0.2 * random.random()))
@@ -175,23 +176,41 @@ class TaskDeployer():
 
         return list(randomlist)
 
-    def sample_operator(self, task_accounts, pending_time_list):
-        task_args = []
-        for i, account in enumerate(task_accounts):
+    def sample_operator_list(self, task_num):
+        operator_list = []
+        for i in range(task_num):
             if random.random() < self.swap_prob:
                 operator_name = random.choice(self.swap_operator_list)
             else:
                 operator_name = random.choice(self.side_operator_list)
 
+            operator_list.append(operator_name)
+
+        return operator_list
+
+    def get_task_args(self, task_candidates, task_account_indices, pending_time_list, operator_list):
+        task_args = []
+        for i in range(len(task_accounts_idx)):
             args = {
-                'acc_label': account,
-                'operator_name': operator_name,
+                'acc_label': task_candidates[task_account_indices[i]],
+                'operator_name': operator_list[i],
                 'start_pengding_time': pending_time_list[i]
             }
-        
+
             task_args.append(args)
 
         return task_args
+
+    def get_last_tx_time(self, seconds):
+        if seconds == 0:
+            return 'NaN'
+
+        day = seconds // 86400
+        seconds = seconds % 86400
+        ds = '' if day == 0 else f'{day}d '
+        s = datetime.utcfromtimestamp(seconds).strftime("%Hh %Mm")
+
+        return ds + s
 
     def get_wash_pending_time(self):
         rand = random.random()
@@ -298,20 +317,24 @@ class TaskDeployer():
 
             logging.info('Sampling task accounts and timetable ...')
             task_num = round(len(task_candidates) * self.epoch_percentage)
-            task_accounts = self.sample_task_accounts(task_candidates, nonces, non_active_times, task_num)
+            task_account_indices = self.sample_task_account_idx(task_candidates, nonces, non_active_times, task_num)
 
             pending_time_list = self.get_pending_time_list(self.epoch_time, task_num)
 
-            assert len(task_accounts) == len(pending_time_list)
+            assert len(task_account_indices) == len(pending_time_list)
             
             logging.info('Epoch time: %s' % datetime.utcfromtimestamp(int(sum(pending_time_list))).strftime("%Hh %Mm %Ss"))
             logging.info('Epoch tasks: %d' % task_num)
 
-            task_args = self.sample_operator(task_accounts, pending_time_list)
+            operator_list = self.sample_operator_list(task_num)
 
+            task_args = self.get_task_args(task_candidates, task_account_indices, pending_time_list, operator_list)
+
+            print("Task overview:")
             for i in range(task_num):
-                print(task_args[i])
-            print()
+                acc_label = task_args['acc_label']
+                last_tx_time = self.get_last_tx_time(non_active_times[task_account_indices[i]])
+                print(f"acc:{acc_label} last_tx:{last_tx_time} operator:{operator_list[i]} pending_time:{pending_time_list[i]}s")
 
             for i in range(task_num):
                 print()

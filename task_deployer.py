@@ -190,7 +190,7 @@ class TaskDeployer():
 
     def get_task_args(self, task_candidates, task_account_indices, pending_time_list, operator_list):
         task_args = []
-        for i in range(len(task_accounts_idx)):
+        for i in range(len(task_account_indices)):
             args = {
                 'acc_label': task_candidates[task_account_indices[i]],
                 'operator_name': operator_list[i],
@@ -332,7 +332,7 @@ class TaskDeployer():
 
             print("Task overview:")
             for i in range(task_num):
-                acc_label = task_args['acc_label']
+                acc_label = task_args[i]['acc_label']
                 last_tx_time = self.get_last_tx_time(non_active_times[task_account_indices[i]])
                 print(f"acc:{acc_label} last_tx:{last_tx_time} operator:{operator_list[i]} pending_time:{pending_time_list[i]}s")
 

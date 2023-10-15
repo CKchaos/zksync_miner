@@ -147,7 +147,8 @@ class TaskDeployer():
         prob = np.ones(acc_num) * 2.5
         prob[nonces < 20] = 1.5
         prob[nonces > 80] = 1
-        prob[non_active_times > 172800] = 6
+        for i in range(0, 3):
+            prob[non_active_times > 86400 * (1.5 + i)] = 5 + 5 ** i
         prob = prob / np.sum(prob)
 
         task_accounts = np.random.choice(candidates, size=sample_num, replace=False, p=prob)

@@ -33,11 +33,6 @@ class SwapOperator(BaseOperator):
 
         return decimals
 
-    def get_eth_balance(self):
-        balance = self.w3.eth.get_balance(self.acc.address)
-
-        return balance
-
     def get_token_balance(self):
         balance = self.token_contract.functions.balanceOf(self.acc.address).call()
 

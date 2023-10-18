@@ -7,3 +7,4 @@ data/sgl_zksync_plan_x_py
 .env
 data/okx_api
 data/okx_api_x_py
+data/send_eth_record

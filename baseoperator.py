@@ -37,6 +37,11 @@ class BaseOperator():
 
         return init_tx_data
 
+    def get_eth_balance(self):
+        balance = self.w3.eth.get_balance(self.acc.address)
+
+        return balance
+
     def get_contract(self, contract_addr, abi_path):
         abi = utils.load_json(abi_path)
         contract = self.w3.eth.contract(contract_addr, abi=abi)

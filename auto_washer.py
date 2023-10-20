@@ -57,8 +57,11 @@ class AutoWasher(BaseOperator):
         eth_balance = self.pancake_operator.get_eth_balance()
         swap_amount = self.get_amount(eth_balance - ETH_MINIMUM_BALANCE)
 
+        print("Request estimated ETH -> USDC output ...")
         pancake_out = self.pancake_operator.get_min_amount_out('ETH', 'USDC', swap_amount, exact_out=1)
         maverick_out = self.maverick_operator.get_min_amount_out('USDC', swap_amount, 'ETH', exact_out=1)
+        print("PancadeSwap: %.6f" % (pancake_out / 1e6))
+        print("Maverick: %.6f" % (maverick_out / 1e6))
 
         swap_operator = self.pancake_operator if pancake_out > maverick_out else self.maverick_operator
 
@@ -71,8 +74,12 @@ class AutoWasher(BaseOperator):
         time.sleep(5 + random.random() * 5)
 
         swap_amount = self.pancake_operator.get_token_balance()
+
+        print("Request estimated USDC -> ETH output ...")
         pancake_out = self.pancake_operator.get_min_amount_out('USDC', 'ETH', swap_amount, exact_out=1)
         maverick_out = self.maverick_operator.get_min_amount_out('USDC', swap_amount, 'USDC', exact_out=1)
+        print("PancadeSwap: %.6f" % (pancake_out / 1e18))
+        print("Maverick: %.6f" % (maverick_out / 1e18))
 
         swap_operator = self.pancake_operator if pancake_out > maverick_out else self.maverick_operator
 

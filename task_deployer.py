@@ -149,7 +149,7 @@ class TaskDeployer():
         prob[nonces < 20] = 1.5
         prob[nonces > 80] = 1
         for i in range(0, 3):
-            prob[non_active_times > 86400 * (1.5 + i)] = 5 + 5 ** i
+            prob[non_active_times > 86400 * (1 + i * 0.6)] = 5 + 5 ** i
         prob[non_active_times < 43200] = 0.2
         prob[non_active_times < 21600] = 0
         prob = prob / np.sum(prob)

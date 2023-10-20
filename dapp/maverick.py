@@ -33,7 +33,7 @@ class Maverick(SwapOperator):
 
         return path
 
-    def get_min_amount_out(self, pool_token, amount_in, from_token):
+    def get_min_amount_out(self, pool_token, amount_in, from_token, exact_out=0):
         amount_out = self.position_contract.functions.calculateSwap(
             ZK_MAVERICK_POOL_ADDRESSES[pool_token],
             amount_in, 
@@ -43,6 +43,9 @@ class Maverick(SwapOperator):
         ).call()
 
         amount_out = amount_out * ZK_MAVERICK_TOKEN_FACTOR[pool_token]
+
+        if exact_out:
+            return int(amount_out)
 
         min_amount_out = int(amount_out * self.mink)
 

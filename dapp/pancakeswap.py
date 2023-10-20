@@ -33,7 +33,7 @@ class PancakeSwap(SwapOperator):
 
         return pool_addr
 
-    def get_min_amount_out(self, from_token, to_token, amount):
+    def get_min_amount_out(self, from_token, to_token, amount, exact_out=0):
         quoter_data = self.quoter_contract.functions.quoteExactInputSingle((
             ZKSYNC_TOKENS[from_token],
             ZKSYNC_TOKENS[to_token],
@@ -41,6 +41,9 @@ class PancakeSwap(SwapOperator):
             ZK_PANCAKE_POOL_FEES[self.swap_token],
             0
         )).call()
+
+        if exact_out:
+            return int(quoter_data[0])
 
         min_amount_out = int(quoter_data[0] * self.mink)
 

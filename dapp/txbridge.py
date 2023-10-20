@@ -32,10 +32,10 @@ class txBridge(BaseOperator):
         return tx_data
 
     def bridge_to_zksync(self):
-        self.check_eth_gas(10)
+        self.check_eth_gas(12)
 
         balance = self.get_eth_balance()
-        amount = balance - int(Web3.to_wei(10 * ZKSYNC_BRIDGE_GAS_LIMIT, 'gwei') * (1 + 0.5 * random.random()))
+        amount = balance - int(Web3.to_wei(15 * ZKSYNC_BRIDGE_GAS_LIMIT, 'gwei') * (1 + 0.5 * random.random()))
 
         zk_gas_limit = random.randint(700000, 900000)
         base_cost = self.contract.functions.l2TransactionBaseCost(self.w3.eth.gas_price, zk_gas_limit, 800).call()

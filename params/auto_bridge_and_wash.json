@@ -1,4 +1,6 @@
 {
-    "task_account": "sgl59",
-    "pending_time": 1
+    "task_account": "sgl15",
+    "pending_time": 1,
+    "max_gap_pending_time": 60,
+    "target_wash_amount": 9000
 }

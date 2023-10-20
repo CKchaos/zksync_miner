@@ -59,10 +59,20 @@ class ETHSender(BaseOperator):
 
         return status
 
-if __name__ == '__main__':
-
+def execute_send_eth(acc, task_account, deposit_address):
     gas_for_execute=0.18
+    sender = ETHSender(acc, gas_for_execute)
 
+    eth_balance = sender.get_eth_balance()
+    amount_in_ether = sender.get_amount(eth_balance)
+
+    amount = Web3.to_wei(amount_in_ether, 'ether')
+    sender.send_eth(deposit_address, amount)
+
+    record_sending(task_account, amount_in_ether)
+    logging.info(f'{amount_in_ether} ETH sent.')
+
+if __name__ == '__main__':
     params = utils.load_json('./params/send_eth.json')
 
     task_account = params['task_account']
@@ -81,13 +91,4 @@ if __name__ == '__main__':
             deposit_address = a['deposit_address']
             break
 
-    sender = ETHSender(acc, gas_for_execute)
-
-    eth_balance = sender.get_eth_balance()
-    amount_in_ether = sender.get_amount(eth_balance)
-
-    amount = Web3.to_wei(amount_in_ether, 'ether')
-    sender.send_eth(deposit_address, amount)
-
-    record_sending(task_account, amount_in_ether)
-    logging.info(f'{amount_in_ether} ETH sent.')
+    execute_send_eth(acc, task_account, deposit_address)

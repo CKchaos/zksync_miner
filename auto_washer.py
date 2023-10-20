@@ -60,7 +60,7 @@ class AutoWasher(BaseOperator):
         print("Request estimated ETH -> USDC output ...")
         pancake_out = self.pancake_operator.get_min_amount_out('ETH', 'USDC', swap_amount, exact_out=1)
         maverick_out = self.maverick_operator.get_min_amount_out('USDC', swap_amount, 'ETH', exact_out=1)
-        print("PancadeSwap: %.6f" % (pancake_out / 1e6))
+        print("PancakeSwap: %.6f" % (pancake_out / 1e6))
         print("Maverick: %.6f" % (maverick_out / 1e6))
 
         swap_operator = self.pancake_operator if pancake_out > maverick_out else self.maverick_operator
@@ -78,7 +78,7 @@ class AutoWasher(BaseOperator):
         print("Request estimated USDC -> ETH output ...")
         pancake_out = self.pancake_operator.get_min_amount_out('USDC', 'ETH', swap_amount, exact_out=1)
         maverick_out = self.maverick_operator.get_min_amount_out('USDC', swap_amount, 'USDC', exact_out=1)
-        print("PancadeSwap: %.6f" % (pancake_out / 1e18))
+        print("PancakeSwap: %.6f" % (pancake_out / 1e18))
         print("Maverick: %.6f" % (maverick_out / 1e18))
 
         swap_operator = self.pancake_operator if pancake_out > maverick_out else self.maverick_operator
@@ -93,27 +93,14 @@ class AutoWasher(BaseOperator):
 
         return wash_amount
 
-if __name__ == '__main__':
-
+def execute_auto_wash(acc, task_account, max_gap_pending_time, target_wash_amount):
     gas_for_approve = 0.24
     gas_for_swap=0.38
     slippage=0.5
 
-    params = utils.load_json('./params/auto_washer.json')
-
-    task_account = params['task_account']
-    max_gap_pending_time = params['max_gap_pending_time']
-    target_wash_amount = params['target_wash_amount']
-
-    account_info = get_decrypted_acc_info(ACCOUNT_INFO_FILE_PATH)
-
-    w3 = Web3(Web3.HTTPProvider(ZKSYNC_ERA_RPC))
-    for a in account_info:
-        if a['label'] == task_account:
-            acc = w3.eth.account.from_key(a['private_key'])
-            break
-
     washer = AutoWasher(acc, task_account, 0.2, gas_for_approve, gas_for_swap, slippage)
+
+    start_balance = washer.get_eth_balance()
 
     total_wash_amount = 0
     while total_wash_amount < target_wash_amount:
@@ -131,5 +118,28 @@ if __name__ == '__main__':
         logging.info(f"Executed wash: {total_wash_amount} / {target_wash_amount}")
         print()
 
+    eth_wash_cost = (start_balance - washer.get_eth_balance()) / 1e18
+    wash_cost_in_usd = eth_wash_cost * utils.crypto_to_usd('ETH')
+
     logging.info("Wash trading finished!")
     logging.info(f"Total washing amount: {total_wash_amount}")
+    logging.info("Washing cost in ETH: %.8f" % (eth_wash_cost))
+    logging.info("Washing cost in USD: %.8f" % (wash_cost_in_usd))
+
+if __name__ == '__main__':
+    params = utils.load_json('./params/auto_washer.json')
+
+    task_account = params['task_account']
+    max_gap_pending_time = params['max_gap_pending_time']
+    target_wash_amount = params['target_wash_amount']
+
+    account_info = get_decrypted_acc_info(ACCOUNT_INFO_FILE_PATH)
+
+    w3 = Web3(Web3.HTTPProvider(ZKSYNC_ERA_RPC))
+    for a in account_info:
+        if a['label'] == task_account:
+            acc = w3.eth.account.from_key(a['private_key'])
+            break
+
+    execute_auto_wash(acc, task_account, max_gap_pending_time, target_wash_amount)
+    

@@ -27,6 +27,8 @@ class BaseOperator():
 
         self.gas_factor = 1
 
+        self.mainnet_flag = False
+
     def get_init_tx_data(self):
         init_tx_data = {
             'from': self.acc.address,
@@ -53,12 +55,15 @@ class BaseOperator():
 
         return gas
 
-    def check_eth_gas(self):
+    def check_eth_gas(self, max_gas_price=None):
+        if max_gas_price == None:
+            max_gas_price = MAX_GWEI
+
         #print("Checking ETH mainnet gas price ...")
         while(True):
             mainnet_gas_price = utils.get_eth_mainnet_gas_price()
             #print(f'ETH gas price is {mainnet_gas_price} gwei.')
-            if mainnet_gas_price > MAX_GWEI:
+            if mainnet_gas_price > max_gas_price:
                 print(f'ETH gas price is too high.\nPending for {GAS_RETRY_PENDING_TIME}s ...')
                 time.sleep(GAS_RETRY_PENDING_TIME)
             else:
@@ -116,7 +121,13 @@ class BaseOperator():
         return tx_status
 
     def check_tx_status(self, tx_hash):
+        if self.mainnet_flag:
+            max_checking_time = MAX_MAINNET_TX_CHECKING_WAIT_TIME
+        else:
+            max_checking_time = MAX_TX_CHECKING_WAIT_TIME
+
         start_time = time.time()
+
         while True:
             try:
                 receipt = self.w3.eth.get_transaction_receipt(tx_hash)
@@ -129,7 +140,7 @@ class BaseOperator():
                 else:
                     return False
             except TransactionNotFound:
-                if time.time() - start_time > MAX_TX_CHECKING_WAIT_TIME:
+                if time.time() - start_time > max_checking_time:
                     print(f'Failed tx: {tx_hash}')
                     return False
                 time.sleep(1)

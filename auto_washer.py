@@ -94,16 +94,19 @@ class AutoWasher(BaseOperator):
         return wash_amount
 
 def execute_auto_wash(acc, task_account, max_gap_pending_time, target_wash_amount):
-    gas_for_approve = 0.24
-    gas_for_swap=0.38
+    gas_for_approve = 0.29
+    gas_for_swap=0.58
     slippage=0.5
 
     washer = AutoWasher(acc, task_account, 0.2, gas_for_approve, gas_for_swap, slippage)
 
-    start_balance = washer.get_eth_balance()
+    start_balance_0 = washer.get_eth_balance()
+    start_usdc_0 = washer.pancake_operator.get_token_balance() / 1e6
 
     total_wash_amount = 0
     while total_wash_amount < target_wash_amount:
+        start_balance = washer.get_eth_balance()
+
         start_pengding_time = int(random.random() * max_gap_pending_time)
         logging.info(f'Execute washing swap for account **< {task_account} >**')
         print(f'Pending for {start_pengding_time}s ...')
@@ -115,16 +118,21 @@ def execute_auto_wash(acc, task_account, max_gap_pending_time, target_wash_amoun
 
         total_wash_amount += wash_amount
 
+        eth_wash_cost = (start_balance - washer.get_eth_balance()) / 1e18
+        wash_cost_in_usd = eth_wash_cost * utils.crypto_to_usd('ETH')
+
         logging.info(f"Executed wash: {total_wash_amount} / {target_wash_amount}")
+        logging.info("Washing cost in ETH: %.8f" % (eth_wash_cost))
+        logging.info("Washing cost in USD: %.8f" % (wash_cost_in_usd))
         print()
 
-    eth_wash_cost = (start_balance - washer.get_eth_balance()) / 1e18
-    wash_cost_in_usd = eth_wash_cost * utils.crypto_to_usd('ETH')
+    eth_wash_cost = (start_balance_0 - washer.get_eth_balance()) / 1e18
+    wash_cost_in_usd = eth_wash_cost * utils.crypto_to_usd('ETH') + start_usdc_0
 
     logging.info("Wash trading finished!")
     logging.info(f"Total washing amount: {total_wash_amount}")
-    logging.info("Washing cost in ETH: %.8f" % (eth_wash_cost))
-    logging.info("Washing cost in USD: %.8f" % (wash_cost_in_usd))
+    logging.info("Total washing cost in ETH: %.8f" % (eth_wash_cost))
+    logging.info("Total washing cost in USD: %.8f" % (wash_cost_in_usd))
 
 if __name__ == '__main__':
     params = utils.load_json('./params/auto_washer.json')

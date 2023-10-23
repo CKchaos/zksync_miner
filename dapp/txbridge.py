@@ -25,7 +25,6 @@ class txBridge(BaseOperator):
         tx_data = {
             "chainId": self.w3.eth.chain_id,
             "from": self.acc.address,
-            "gasPrice": self.w3.eth.gas_price,
             "gas": ZKSYNC_BRIDGE_GAS_LIMIT
         }
 
@@ -35,7 +34,7 @@ class txBridge(BaseOperator):
         self.check_eth_gas(12)
 
         balance = self.get_eth_balance()
-        amount = balance - int(Web3.to_wei(15 * ZKSYNC_BRIDGE_GAS_LIMIT, 'gwei') * (1 + 0.5 * random.random()))
+        amount = balance - int(self.w3.eth.gas_price * ZKSYNC_BRIDGE_GAS_LIMIT * (1.1 + 0.2 * random.random()))
 
         zk_gas_limit = random.randint(700000, 900000)
         base_cost = self.contract.functions.l2TransactionBaseCost(self.w3.eth.gas_price, zk_gas_limit, 800).call()
@@ -58,7 +57,8 @@ class txBridge(BaseOperator):
         tx_data = self.get_tx_data()
         tx_data.update({
             "value": amount,
-            "nonce": nonce
+            "nonce": nonce,
+            "gasPrice": int(self.w3.eth.gas_price * 1.02),
         })
 
         builded_tx = tx.build_transaction(tx_data)

@@ -123,8 +123,10 @@ class BaseOperator():
     def check_tx_status(self, tx_hash):
         if self.mainnet_flag:
             max_checking_time = MAX_MAINNET_TX_CHECKING_WAIT_TIME
+            sleep_time = 5
         else:
             max_checking_time = MAX_TX_CHECKING_WAIT_TIME
+            sleep_time = 0.5
 
         start_time = time.time()
 
@@ -134,7 +136,7 @@ class BaseOperator():
                 status = receipt['status']
 
                 if status is None:
-                    time.sleep(0.5)
+                    time.sleep(sleep_time)
                 elif status == 1:
                     return True
                 else:

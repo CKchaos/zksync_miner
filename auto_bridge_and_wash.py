@@ -47,8 +47,8 @@ if __name__ == "__main__":
 
     execute_bridge_to_zksync(acc, task_account)
     print()
-
-    pending_time = int(1800 + 900 * random.random())
+    
+    pending_time = int(1200 + 1200 * random.random())
     logging.info(f'Prepare to execute washing swap for account **< {task_account} >**')
     print(f'Pending for {pending_time}s ...')
     print(f'Estimated execution time: {utils.get_readable_time(time.time() + pending_time)}')
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     execute_auto_wash(acc, task_account, max_gap_pending_time, target_wash_amount)
     print()
 
-    pending_time = int(600 + 600 * random.random())
+    pending_time = int(1800 * random.random())
     logging.info(f'Prepare to send ETH back to OKX for account **< {task_account} >**')
     print(f'Pending for {pending_time}s ...')
     print(f'Estimated execution time: {utils.get_readable_time(time.time() + pending_time)}')

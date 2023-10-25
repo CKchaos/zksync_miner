@@ -31,7 +31,7 @@ class txBridge(BaseOperator):
         return tx_data
 
     def bridge_to_zksync(self):
-        self.check_eth_gas(12)
+        self.check_eth_gas(18)
 
         balance = self.get_eth_balance()
         amount = balance - int(self.w3.eth.gas_price * ZKSYNC_BRIDGE_GAS_LIMIT * (1.1 + 0.2 * random.random()))

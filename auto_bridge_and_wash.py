@@ -48,7 +48,7 @@ if __name__ == "__main__":
     execute_bridge_to_zksync(acc, task_account)
     print()
     
-    pending_time = int(1200 + 1200 * random.random())
+    pending_time = int(1200 + 1800 * random.random())
     logging.info(f'Prepare to execute washing swap for account **< {task_account} >**')
     print(f'Pending for {pending_time}s ...')
     print(f'Estimated execution time: {utils.get_readable_time(time.time() + pending_time)}')

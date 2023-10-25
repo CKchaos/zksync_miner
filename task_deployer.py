@@ -31,7 +31,7 @@ def get_operator_sets():
     swap_operator_set = {
         'iZumi': iZumi,
         'Maverick': Maverick,
-        'Mute': Mute,
+        #'Mute': Mute,
         'Odos': Odos,
         'PancakeSwap': PancakeSwap,
         'SpaceFi': SpaceFi,

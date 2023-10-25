@@ -246,7 +246,7 @@ ZK_TEVAERA_CONTRACTs = {
 SWAP_TRADABLE_TOKENS = {
     'SyncSwap': ZK_SYNCSWAP_TOKENS,
     'PancakeSwap': ZK_PANCAKE_TOKENS,
-    'Mute': ZK_MUTE_TOKENS,
+    #'Mute': ZK_MUTE_TOKENS,
     'SpaceFi': ZK_SPACEFI_TOKENS,
     'zkSwap': ZK_ZKSWAP_TOKENS,
     'iZumi': ZK_IZUMI_TOKENS,

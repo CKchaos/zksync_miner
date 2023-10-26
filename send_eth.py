@@ -43,7 +43,7 @@ class ETHSender(BaseOperator):
         return amount_in_ether
 
     def send_eth(self, deposit_address, amount):
-        self.check_eth_gas()
+        self.check_eth_gas(40)
 
         nonce = self.w3.eth.get_transaction_count(self.acc.address)
 

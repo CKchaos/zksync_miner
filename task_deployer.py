@@ -37,7 +37,7 @@ def get_operator_sets():
         'SpaceFi': SpaceFi,
         'SyncSwap': SyncSwap,
         'WooFi': WooFi,
-        'XYSwap': XYSwap,
+        #'XYSwap': XYSwap,
         'zkSwap': zkSwap,
     }
 

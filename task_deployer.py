@@ -153,6 +153,10 @@ class TaskDeployer():
         prob[non_active_times < 3600 * 9] = 0
         prob = prob / np.sum(prob)
 
+        non_zero_prob = np.sum(prob > 0)
+        if non_zero_prob < sample_num:
+            sample_num = non_zero_prob
+
         indices = list(range(acc_num))
         task_accounts_idx = np.random.choice(indices, size=sample_num, replace=False, p=prob)
 
@@ -324,6 +328,8 @@ class TaskDeployer():
             logging.info('Sampling task accounts and timetable ...')
             task_num = round(len(task_candidates) * self.epoch_percentage)
             task_account_indices = self.sample_task_account_idx(task_candidates, nonces, non_active_times, task_num)
+
+            task_num = len(task_account_indices)
 
             pending_time_list = self.get_pending_time_list(self.epoch_time, task_num)
 

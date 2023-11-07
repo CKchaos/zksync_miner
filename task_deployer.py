@@ -146,12 +146,11 @@ class TaskDeployer():
         acc_num = len(candidates)
 
         prob = np.ones(acc_num) * 2
-        prob[nonces > 100] = 0
-        prob[non_active_times > 86400 * 2] = 0.6
+        prob[nonces >= 100] = 0
+        prob[non_active_times > 86400 * 2] = 0.5
         prob[non_active_times > 86400 * 3] = 3
         prob[nonces < 80] = 6
         prob[non_active_times > 86400 * 4] = 25
-        prob[non_active_times < 3600 * 12] = 0
         prob = prob / np.sum(prob)
 
         non_zero_prob = np.sum(prob > 0)

@@ -83,7 +83,7 @@ class TaskDeployer():
         if max_amount < ETH_SWAP_MINIMUM_IN_ETHER * 1e18:
             return 0
 
-        swap_amount = ETH_SWAP_MINIMUM_IN_ETHER + 0.005 * random.random()
+        swap_amount = ETH_SWAP_MINIMUM_IN_ETHER + 0.004 * random.random()
 
         digit_list = [4, 5, 6, 7, 8]
         digit_num = random.choices(digit_list, weights=(4, 16, 36, 32, 12), k=1)[0]
@@ -149,7 +149,7 @@ class TaskDeployer():
         prob[nonces >= 100] = 0
         prob[non_active_times > 86400 * 2] = 0.5
         prob[non_active_times > 86400 * 3] = 3
-        prob[nonces < 80] = 6
+        prob[nonces < 90] = 6
         prob[non_active_times > 86400 * 4] = 25
         prob = prob / np.sum(prob)
 

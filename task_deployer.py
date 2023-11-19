@@ -323,9 +323,6 @@ class TaskDeployer():
             nonces_np = np.array(nonces)
             logging.info('Number of all transactions: %d' % sum(nonces_np))
             logging.info('Number of accounts with >100 transactions: %d' % sum(nonces_np >= 100))
-            logging.info('Number of accounts with >93 transactions: %d' % sum(nonces_np >= 93))
-            logging.info('Number of accounts with >85 transactions: %d' % sum(nonces_np >= 85))
-            logging.info('Number of transactions to perform: %d' % sum(100 - nonces_np[nonces_np < 100]))
 
             logging.info('Getting non-active times ...')
             non_active_times = self.get_non_active_times(task_candidates)

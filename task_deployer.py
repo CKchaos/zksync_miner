@@ -149,8 +149,7 @@ class TaskDeployer():
         prob[nonces >= 100] = 0
         prob[non_active_times > 86400 * 4] = 0.2
         prob[non_active_times > 86400 * 5] = 10
-        prob = prob / np.sum(prob)
-
+        
         non_zero_prob = np.sum(prob > 0)
         print("non_zero_prob:", non_zero_prob)
 
@@ -159,6 +158,8 @@ class TaskDeployer():
 
         if sample_num == 0:
             return []
+
+        prob = prob / np.sum(prob)
 
         indices = list(range(acc_num))
         task_accounts_idx = np.random.choice(indices, size=sample_num, replace=False, p=prob)

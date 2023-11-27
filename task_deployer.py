@@ -153,8 +153,9 @@ class TaskDeployer():
         non_zero_prob = np.sum(prob > 0)
         print("non_zero_prob:", non_zero_prob)
 
-        if non_zero_prob < sample_num:
-            sample_num = int(non_zero_prob * random.random())
+        rand_ = int(non_zero_prob * random.random())
+        if rand_ < sample_num:
+            sample_num = rand_
 
         if sample_num == 0:
             return []

@@ -147,13 +147,13 @@ class TaskDeployer():
 
         prob = np.ones(acc_num) * 2
         prob[nonces >= 100] = 0
-        prob[non_active_times > 86400 * 4] = 0.2
-        prob[non_active_times > 86400 * 5] = 10
+        prob[non_active_times > 86400 * 3] = 2
+        #prob[non_active_times > 86400 * 5] = 10
         
         non_zero_prob = np.sum(prob > 0)
         print("non_zero_prob:", non_zero_prob)
 
-        rand_ = int(non_zero_prob * (random.random() * 0.8 + 0.2))
+        rand_ = int(non_zero_prob * (random.random() * 0.9 + 0.1))
         if rand_ < sample_num:
             sample_num = rand_
 

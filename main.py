@@ -1,6 +1,7 @@
 from web3 import Web3
 import random
 import time
+import numpy as np
 
 from logger import logging
 from config import *
@@ -26,7 +27,7 @@ for acc_info in account_info:
 operator_set = {
     'SyncSwap': SyncSwap,
     'PancakeSwap': PancakeSwap,
-    'Mute': Mute,
+    #'Mute': Mute,
     'SpaceFi': SpaceFi,
     'zkSwap': zkSwap,
     'Maverick': Maverick,
@@ -55,6 +56,26 @@ def get_amount(max_amount):
     swap_amount = int(swap_amount)
 
     return swap_amount
+
+def get_pending_time_list(epoch_time, epoch_task_num):
+    total_time = int(epoch_time * (0.9 + 0.2 * random.random()))
+    unit_time = int(total_time / epoch_task_num)
+    rand = np.random.rand(epoch_task_num)
+    
+    randomlist = np.zeros(epoch_task_num)
+    for i in range(epoch_task_num - 1):
+        randomlist[i] = 1 - rand[i] + rand[i + 1]
+    randomlist[-1] = 1 - rand[-1] + rand[0]
+    
+    max_idx = np.argmax(randomlist)
+    min_idx = np.argmin(randomlist)
+    
+    randomlist[max_idx] = randomlist[max_idx] * 1.2
+    randomlist[min_idx] = randomlist[min_idx] * 0.8
+    
+    randomlist = np.array(randomlist * unit_time, dtype='int64')
+
+    return list(randomlist)
 
 def get_wash_pending_time():
     rand = random.random()
@@ -120,10 +141,73 @@ if __name__ == '__main__':
 
     operator_list = list(operator_set.keys())
 
-    total_time = 300
+    total_time = 84000
     task_accounts = [
-        'sgl83',
-        'sgl94',
+            'sgl8',
+    'sgl9',
+    'sgl21',
+    'sgl27',
+    'sgl32',
+    'sgl33',
+    'sgl35',
+    'sgl48',
+    'sgl49',
+    'sgl57',
+    'sgl60',
+    'sgl64',
+    'sgl65',
+    'sgl66',
+    'sgl68',
+    'sgl69',
+    'sgl71',
+    'sgl74',
+    'sgl77',
+    'sgl78',
+    'sgl79',
+    'sgl80',
+    'sgl81',
+    'sgl82',
+    'sgl84',
+    'sgl85',
+    'sgl86',
+    'sgl88',
+    'sgl89',
+    'sgl90',
+    'sgl92',
+    'sgl94',
+    'sgl95',
+    'sgl96',
+    'sgl97',
+    'sgl98',
+    'sgl99',
+    'sgl100',
+    'sgl101',
+    'sgl104',
+    'sgl105',
+    'sgl106',
+    'sgl109',
+    'sgl110',
+    'sgl111',
+    'sgl113',
+    'sgl116',
+    'sgl117',
+    'sgl118',
+    'sgl119',
+    'sgl120',
+    'sgl121',
+    'sgl123',
+    'sgl124',
+    'sgl126',
+    'sgl129',
+    'sgl131',
+    'sgl133',
+    'sgl134',
+    'sgl135',
+    'sgl137',
+    'sgl138',
+    'sgl141',
+    'sgl142',
+    'sgl143'
     ]
     account_list1 = task_accounts[::2]
     account_list2 = task_accounts[1::2]
@@ -136,13 +220,8 @@ if __name__ == '__main__':
     task_num = len(task_accounts)
     print('Tasks:', task_num)
 
-    randomlist = sorted(random.sample(range(total_time), task_num - 2))
-    randomlist = [1] + randomlist + [total_time]
-
-    pending_time_list = [randomlist[0]]
-
-    for i in range(1, task_num):
-        pending_time_list.append(randomlist[i] - randomlist[i - 1])        
+    pending_time_list = get_pending_time_list(total_time, task_num)
+    pending_time_list[0] = 1
 
     task_args = []
     for i, account in enumerate(task_accounts):
@@ -153,9 +232,12 @@ if __name__ == '__main__':
 
         if random.random() < 0.5:
             swap_token = 'USDC'
+        
+        swap_token = 'USDC'
 
         swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(40, 40, 20), k=1)[0]
-        
+        swap_mode = (1, 0)
+
         if swap_token != 'USDC':
             swap_mode = (1, 1)
 

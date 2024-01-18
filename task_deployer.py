@@ -33,12 +33,12 @@ def get_operator_sets():
         'Maverick': Maverick,
         #'Mute': Mute,
         'Odos': Odos,
-        'PancakeSwap': PancakeSwap,
+        #'PancakeSwap': PancakeSwap,
         'SpaceFi': SpaceFi,
         'SyncSwap': SyncSwap,
         'WooFi': WooFi,
         #'XYSwap': XYSwap,
-        'zkSwap': zkSwap,
+        #'zkSwap': zkSwap,
     }
 
     side_operator_set = {
@@ -253,7 +253,7 @@ class TaskDeployer():
         if random.random() < self.usdc_prob:
             swap_token = 'USDC'
 
-        swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(30, 5, 30), k=1)[0]
+        swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(30, 2, 30), k=1)[0]
         
         if swap_token != 'USDC':
             swap_mode = (1, 1)

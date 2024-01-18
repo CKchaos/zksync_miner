@@ -147,7 +147,7 @@ class TaskDeployer():
 
         prob = np.ones(acc_num) * 2
         prob[nonces >= 100] = 0
-        prob[non_active_times > 86400 * 3] = 2
+        prob[non_active_times > 86400 * 4.5] = 2
         #prob[non_active_times > 86400 * 5] = 10
         
         non_zero_prob = np.sum(prob > 0)

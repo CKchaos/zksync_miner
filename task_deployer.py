@@ -253,7 +253,7 @@ class TaskDeployer():
         if random.random() < self.usdc_prob:
             swap_token = 'USDC'
 
-        swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(30, 2, 30), k=1)[0]
+        swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(30, 30, 3), k=1)[0]
         
         if swap_token != 'USDC':
             swap_mode = (1, 1)

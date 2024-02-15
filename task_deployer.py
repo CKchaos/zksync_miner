@@ -253,7 +253,7 @@ class TaskDeployer():
         if random.random() < self.usdc_prob:
             swap_token = 'USDC'
 
-        swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(30, 30, 3), k=1)[0]
+        swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(0, 30, 0), k=1)[0]
         
         if swap_token != 'USDC':
             swap_mode = (1, 1)
@@ -272,6 +272,9 @@ class TaskDeployer():
                 swap_mode = (0, 1)
                 print('Sell USDC this time ...')
             elif swap_mode[0] == 0:
+                print('No USDC, Skip.')
+                return
+
                 swap_mode = (1, 0)
                 print('Buy USDC this time ...')
 

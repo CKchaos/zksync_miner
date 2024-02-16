@@ -2,5 +2,5 @@
     "epoch_time": 21600,
     "epoch_percentage": 0.15,
     "swap_prob": 1,
-    "usdc_prob": 0.95
+    "usdc_prob": 0.5
 }

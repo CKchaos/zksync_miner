@@ -83,7 +83,7 @@ class TaskDeployer():
         if max_amount < ETH_SWAP_MINIMUM_IN_ETHER * 1e18:
             return 0
 
-        swap_amount = ETH_SWAP_MINIMUM_IN_ETHER + 0.004 * random.random()
+        swap_amount = ETH_SWAP_MINIMUM_IN_ETHER + 0.0021 * random.random()
 
         digit_list = [4, 5, 6, 7, 8]
         digit_num = random.choices(digit_list, weights=(4, 16, 36, 32, 12), k=1)[0]
@@ -147,7 +147,7 @@ class TaskDeployer():
 
         prob = np.ones(acc_num) * 2
         prob[nonces >= 100] = 0
-        prob[non_active_times > 86400 * 3.2] = 2
+        prob[non_active_times > 86400 * 8] = 2
         #prob[non_active_times > 86400 * 5] = 10
         
         non_zero_prob = np.sum(prob > 0)
@@ -253,7 +253,7 @@ class TaskDeployer():
         if random.random() < self.usdc_prob:
             swap_token = 'USDC'
 
-        swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(0, 30, 0), k=1)[0]
+        swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(30, 10, 30), k=1)[0]
         
         if swap_token != 'USDC':
             swap_mode = (1, 1)
@@ -272,8 +272,8 @@ class TaskDeployer():
                 swap_mode = (0, 1)
                 print('Sell USDC this time ...')
             elif swap_mode[0] == 0:
-                print('No USDC, Skip.')
-                return
+                #print('No USDC, Skip.')
+                #return
 
                 swap_mode = (1, 0)
                 print('Buy USDC this time ...')

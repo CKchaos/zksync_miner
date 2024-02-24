@@ -246,7 +246,7 @@ SWAP_TRADABLE_TOKENS = {
     #'Mute': ZK_MUTE_TOKENS,
     'SpaceFi': ZK_SPACEFI_TOKENS,
     'zkSwap': ZK_ZKSWAP_TOKENS,
-    'iZumi': ZK_IZUMI_TOKENS,
+    #'iZumi': ZK_IZUMI_TOKENS,
     'Maverick': ZK_MAVERICK_TOKENS,
     'Odos': ZK_ODOS_TOKENS,
     'XYSwap': ZK_XYSWAP_TOKENS,

@@ -33,12 +33,12 @@ def get_operator_sets():
         'Maverick': Maverick,
         #'Mute': Mute,
         'Odos': Odos,
-        #'PancakeSwap': PancakeSwap,
-        #'SpaceFi': SpaceFi,
+        'PancakeSwap': PancakeSwap,
+        'SpaceFi': SpaceFi,
         'SyncSwap': SyncSwap,
         'WooFi': WooFi,
-        #'XYSwap': XYSwap,
-        #'zkSwap': zkSwap,
+        'XYSwap': XYSwap,
+        'zkSwap': zkSwap,
     }
 
     side_operator_set = {

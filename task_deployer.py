@@ -34,11 +34,11 @@ def get_operator_sets():
         #'Mute': Mute,
         'Odos': Odos,
         'PancakeSwap': PancakeSwap,
-        'SpaceFi': SpaceFi,
+        #'SpaceFi': SpaceFi,
         'SyncSwap': SyncSwap,
         'WooFi': WooFi,
         'XYSwap': XYSwap,
-        'zkSwap': zkSwap,
+        #'zkSwap': zkSwap,
     }
 
     side_operator_set = {

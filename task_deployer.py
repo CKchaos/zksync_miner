@@ -65,7 +65,7 @@ class TaskDeployer():
 
         self.gas_for_approve = 0.24
         self.gas_for_swap=0.38
-        self.slippage=0.5
+        self.slippage=2
 
         self.swap_operator_set, self.side_operator_set = get_operator_sets()
         self.swap_operator_list = list(self.swap_operator_set.keys())

@@ -148,7 +148,7 @@ class TaskDeployer():
         prob = np.ones(acc_num) * 2
         prob[nonces >= 100] = 0
         #prob[non_active_times > 86400 * 0.5] = 2
-        prob[non_active_times > 86400 * 2] = 10
+        prob[non_active_times > 86400 * 2.5] = 10
         
         non_zero_prob = np.sum(prob > 0)
         print("non_zero_prob:", non_zero_prob)
@@ -253,7 +253,7 @@ class TaskDeployer():
         if random.random() < self.usdc_prob:
             swap_token = 'USDC'
 
-        swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(30, 10, 40), k=1)[0]
+        swap_mode = random.choices([(1, 0), (0, 1), (1, 1)], weights=(20, 20, 30), k=1)[0]
         
         if swap_token != 'USDC':
             swap_mode = (1, 1)

@@ -30,14 +30,14 @@ from dapp.zns import ZNS
 def get_operator_sets():
     swap_operator_set = {
         #'iZumi': iZumi,
-        #'Maverick': Maverick,
+        'Maverick': Maverick,
         #'Mute': Mute,
         'Odos': Odos,
         #'PancakeSwap': PancakeSwap,
         #'SpaceFi': SpaceFi,
         'SyncSwap': SyncSwap,
         'WooFi': WooFi,
-        #'XYSwap': XYSwap,
+        'XYSwap': XYSwap,
         #'zkSwap': zkSwap,
     }
 
